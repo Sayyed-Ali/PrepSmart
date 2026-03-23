@@ -1,32 +1,39 @@
 // Stats cards component - shows 4 key metrics
-const StatsGrid = () => {
-    // hardcoded for now, will connect to backend later
+const StatsGrid = ({ stats }) => {
+    // use passed stats or defaults
+    const displayStats = stats || {
+        interviewsCompleted: 0,
+        averageScore: 0,
+        timeSpent: 0,
+        totalInterviews: 0
+    }
+
     const statsData = [
         {
             icon: '🎯',
-            value: '12',
+            value: displayStats.interviewsCompleted.toString(),
             label: 'Interviews Done',
             bgColor: 'bg-purple-100',
             textColor: 'text-purple-600'
         },
         {
             icon: '⭐',
-            value: '8.5',
+            value: displayStats.averageScore || '0',
             label: 'Average Score',
             bgColor: 'bg-blue-100',
             textColor: 'text-blue-600'
         },
         {
             icon: '📊',
-            value: '45h',
+            value: `${displayStats.timeSpent}h`,
             label: 'Time Practiced',
             bgColor: 'bg-green-100',
             textColor: 'text-green-600'
         },
         {
-            icon: '🏢',
-            value: '8',
-            label: 'Companies Studied',
+            icon: '📝',
+            value: displayStats.totalInterviews.toString(),
+            label: 'Total Sessions',
             bgColor: 'bg-orange-100',
             textColor: 'text-orange-600'
         }
@@ -39,17 +46,14 @@ const StatsGrid = () => {
                     key={idx}
                     className="bg-white p-5 rounded-xl shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
                 >
-                    {/* icon with colored background */}
                     <div className={`w-11 h-11 ${stat.bgColor} ${stat.textColor} rounded-lg flex items-center justify-center text-xl mb-3`}>
                         {stat.icon}
                     </div>
 
-                    {/* main stat value */}
                     <div className="text-2xl lg:text-3xl font-bold text-gray-800 mb-1">
                         {stat.value}
                     </div>
 
-                    {/* description label */}
                     <div className="text-gray-600 text-xs lg:text-sm">{stat.label}</div>
                 </div>
             ))}

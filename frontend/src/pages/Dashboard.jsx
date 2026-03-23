@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { authAPI } from '../services/api'
+import { authAPI, interviewAPI } from '../services/api'
 import Sidebar from '../components/DashboardSidebar'
 import StatsGrid from '../components/StatsGrid'
 import WelcomeCard from '../components/WelcomeCard'
@@ -8,36 +8,74 @@ import RecentInterviews from '../components/RecentInterviews'
 import CalendarWidget from '../components/CalendarWidget'
 import ProgressChart from '../components/ProgressChart'
 
-// Main dashboard page - shows user stats and recent activity
 function Dashboard() {
     const navigate = useNavigate()
     const [user, setUser] = useState(null)
+    const [interviews, setInterviews] = useState([])
+    const [loading, setLoading] = useState(true)
 
-    // get user data on mount
+    // get user data and interviews on mount
     useEffect(() => {
-        const currentUser = authAPI.getCurrentUser()
-        if (currentUser) {
+        const fetchData = async () => {
+            const currentUser = authAPI.getCurrentUser()
+            if (!currentUser) {
+                navigate('/login')
+                return
+            }
+
             setUser(currentUser)
-        } else {
-            navigate('/login')
+
+            // fetch user's interviews
+            try {
+                const response = await interviewAPI.getUserInterviews(currentUser.id)
+                console.log('User interviews:', response)
+                setInterviews(response.interviews || [])
+            } catch (error) {
+                console.error('Error fetching interviews:', error)
+                setInterviews([])
+            } finally {
+                setLoading(false)
+            }
         }
+
+        fetchData()
     }, [navigate])
 
-    // handle logout
     const handleLogout = () => {
         authAPI.logout()
         navigate('/login')
     }
 
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <div className="text-gray-600">Loading your dashboard...</div>
+                </div>
+            </div>
+        )
+    }
+
     if (!user) {
-        return <div>Loading...</div>
+        return null
+    }
+
+    // calculate stats from actual data
+    const stats = {
+        interviewsCompleted: interviews.filter(i => i.status === 'completed').length,
+        totalInterviews: interviews.length,
+        averageScore: interviews.length > 0
+            ? (interviews.reduce((sum, i) => sum + (i.feedback?.overallScore || 0), 0) / interviews.length).toFixed(1)
+            : 0,
+        // for time spent, we'll use user.stats if available
+        timeSpent: user.stats?.timeSpent || 0
     }
 
     return (
         <div className="min-h-screen bg-gray-50 flex">
             <Sidebar onLogout={handleLogout} />
 
-            {/* rest of the dashboard code stays the same */}
             <div className="flex-1 overflow-auto">
                 <div className="max-w-[1400px] mx-auto p-6 lg:p-10">
 
@@ -47,7 +85,9 @@ function Dashboard() {
                                 Hello, {user.name}! 👋
                             </h1>
                             <p className="text-gray-600 text-base lg:text-lg">
-                                Ready to ace your next interview?
+                                {stats.totalInterviews === 0
+                                    ? "Ready to start your first interview?"
+                                    : "Ready to ace your next interview?"}
                             </p>
                         </div>
 
@@ -55,7 +95,7 @@ function Dashboard() {
                             <button className="relative w-11 h-11 bg-white rounded-xl flex items-center justify-center hover:shadow-lg transition-all">
                                 <span className="text-lg">🔔</span>
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-semibold">
-                                    3
+                                    0
                                 </span>
                             </button>
 
@@ -73,12 +113,14 @@ function Dashboard() {
                         </div>
                     </div>
 
-                    <StatsGrid />
+                    {/* Pass real stats to StatsGrid */}
+                    <StatsGrid stats={stats} />
 
                     <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-8">
                         <div className="xl:col-span-8 space-y-6">
                             <WelcomeCard />
-                            <RecentInterviews />
+                            {/* Pass real interviews data */}
+                            <RecentInterviews interviews={interviews.slice(0, 3)} />
                         </div>
                         <div className="xl:col-span-4">
                             <CalendarWidget />
