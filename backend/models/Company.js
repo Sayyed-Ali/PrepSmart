@@ -28,11 +28,20 @@ const companySchema = new mongoose.Schema({
         }
     },
 
-    // commonly asked questions
+    // commonly asked questions - FIXED SCHEMA
     commonQuestions: [{
-        question: String,
-        type: String,  // technical, behavioral, hr
-        difficulty: String
+        question: {
+            type: String,
+            required: true
+        },
+        type: {
+            type: String,
+            required: true
+        },
+        difficulty: {
+            type: String,
+            required: true
+        }
     }],
 
     // company culture
