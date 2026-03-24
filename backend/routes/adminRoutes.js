@@ -207,4 +207,118 @@ router.put('/users/:id/role', async (req, res) => {
     }
 })
 
+router.post('/aptitude/questions', async (req, res) => {
+    try {
+        const AptitudeQuestion = require('../models/AptitudeQuestion')
+
+        const question = await AptitudeQuestion.create(req.body)
+
+        console.log('Aptitude question added:', question._id)
+
+        res.status(201).json({
+            success: true,
+            message: 'Question added successfully',
+            question
+        })
+
+    } catch (error) {
+        console.error('Error adding question:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Error adding question',
+            error: error.message
+        })
+    }
+})
+
+// POST /api/admin/aptitude/questions/bulk - bulk upload
+router.post('/aptitude/questions/bulk', async (req, res) => {
+    try {
+        const AptitudeQuestion = require('../models/AptitudeQuestion')
+        const { questions } = req.body
+
+        if (!Array.isArray(questions)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Questions must be an array'
+            })
+        }
+
+        const inserted = await AptitudeQuestion.insertMany(questions)
+
+        console.log(`${inserted.length} questions added`)
+
+        res.status(201).json({
+            success: true,
+            message: 'Questions added successfully',
+            count: inserted.length
+        })
+
+    } catch (error) {
+        console.error('Error bulk uploading questions:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Error uploading questions',
+            error: error.message
+        })
+    }
+})
+
+// GET /api/admin/aptitude/questions - get all questions
+router.get('/aptitude/questions', async (req, res) => {
+    try {
+        const AptitudeQuestion = require('../models/AptitudeQuestion')
+
+        const { category, difficulty } = req.query
+
+        let filter = {}
+        if (category) filter.category = category
+        if (difficulty) filter.difficulty = difficulty
+
+        const questions = await AptitudeQuestion.find(filter).sort({ createdAt: -1 })
+
+        res.json({
+            success: true,
+            count: questions.length,
+            questions
+        })
+
+    } catch (error) {
+        console.error('Error fetching questions:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching questions'
+        })
+    }
+})
+
+// DELETE /api/admin/aptitude/questions/:id - delete question
+router.delete('/aptitude/questions/:id', async (req, res) => {
+    try {
+        const AptitudeQuestion = require('../models/AptitudeQuestion')
+
+        const question = await AptitudeQuestion.findByIdAndDelete(req.params.id)
+
+        if (!question) {
+            return res.status(404).json({
+                success: false,
+                message: 'Question not found'
+            })
+        }
+
+        res.json({
+            success: true,
+            message: 'Question deleted successfully'
+        })
+
+    } catch (error) {
+        console.error('Error deleting question:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting question'
+        })
+    }
+})
+
+
 module.exports = router
