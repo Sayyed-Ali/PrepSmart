@@ -165,42 +165,97 @@ function OverviewTab() {
 }
 
 // Companies Tab Component
+// Replace the CompaniesTab function with this:
+
 function CompaniesTab() {
+    const navigate = useNavigate()
+
     return (
         <div>
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Manage Companies</h2>
-                <button className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition">
+                <button
+                    onClick={() => navigate('/admin/add-company')}
+                    className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                >
                     + Add Company
                 </button>
             </div>
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <div className="flex gap-3">
-                    <div className="text-2xl">⚠️</div>
-                    <div>
-                        <h4 className="font-bold text-yellow-900">Under Construction</h4>
-                        <p className="text-sm text-yellow-800">Company management UI coming soon. Use bulk upload script for now.</p>
+            <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">🏢</div>
+                    <h3 className="font-bold text-lg mb-2">Add Single Company</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Use the form to add company details one by one
+                    </p>
+                    <button
+                        onClick={() => navigate('/admin/add-company')}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                        Add Company
+                    </button>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">📤</div>
+                    <h3 className="font-bold text-lg mb-2">Bulk Upload</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Use the upload script to add multiple companies
+                    </p>
+                    <div className="bg-gray-100 p-3 rounded text-sm font-mono text-gray-700">
+                        node scripts/uploadCompanies.js
                     </div>
                 </div>
             </div>
+        </div>
+    )
+}
 
-            <div className="bg-white rounded-xl p-6 shadow-sm">
-                <h3 className="font-bold mb-4">How to Add Companies</h3>
-                <ol className="space-y-3 text-gray-700">
-                    <li className="flex gap-3">
-                        <span className="font-bold">1.</span>
-                        <span>Prepare company data in JSON format (see example below)</span>
-                    </li>
-                    <li className="flex gap-3">
-                        <span className="font-bold">2.</span>
-                        <span>Use the bulk upload script in backend folder</span>
-                    </li>
-                    <li className="flex gap-3">
-                        <span className="font-bold">3.</span>
-                        <span>Run: <code className="bg-gray-100 px-2 py-1 rounded">node scripts/uploadCompanies.js</code></span>
-                    </li>
-                </ol>
+
+function QuestionsTab() {
+    const navigate = useNavigate()
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Manage Questions</h2>
+                <button
+                    onClick={() => navigate('/admin/add-aptitude-question')}
+                    className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                >
+                    + Add Question
+                </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">📝</div>
+                    <h3 className="font-bold text-lg mb-2">Aptitude Questions</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Add questions for quantitative, logical, and verbal tests
+                    </p>
+                    <button
+                        onClick={() => navigate('/admin/add-aptitude-question')}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                        Add Questions
+                    </button>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">💻</div>
+                    <h3 className="font-bold text-lg mb-2">DSA Questions</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Add coding problems and algorithms
+                    </p>
+                    <button
+                        className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed"
+                        disabled
+                    >
+                        Coming Soon
+                    </button>
+                </div>
             </div>
         </div>
     )
@@ -294,25 +349,6 @@ function UsersTab() {
                         ))}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    )
-}
-
-// Questions Tab Component
-function QuestionsTab() {
-    return (
-        <div>
-            <h2 className="text-2xl font-bold mb-6">Questions Bank</h2>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex gap-3">
-                    <div className="text-2xl">💡</div>
-                    <div>
-                        <h4 className="font-bold text-blue-900">Coming Soon</h4>
-                        <p className="text-sm text-blue-800">Question management interface will be added in next iteration.</p>
-                    </div>
-                </div>
             </div>
         </div>
     )

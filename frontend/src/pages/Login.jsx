@@ -30,8 +30,14 @@ function Login() {
             const response = await authAPI.login(formData)
             console.log('Login successful:', response)
 
-            // redirect to dashboard
-            navigate('/dashboard')
+            // ✅ ADD THIS - Check role and redirect accordingly
+            const user = authAPI.getCurrentUser()
+
+            if (user && user.role === 'admin') {
+                navigate('/admin')
+            } else {
+                navigate('/dashboard')
+            }
 
         } catch (err) {
             console.error('Login error:', err)

@@ -10,10 +10,10 @@ const DashboardSidebar = ({ onLogout }) => {
         { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
         { id: 'interview', label: 'Mock Interview', icon: '🎤', path: '/interview-setup' },
         { id: 'companies', label: 'Companies', icon: '🏢', path: '/companies' },
-        { id: 'aptitude', label: 'Aptitude Tests', icon: '📝', path: '/aptitude' },
+        { id: 'aptitude', label: 'Aptitude Tests', icon: '📝', path: '/aptitude-setup' },  // Update this
         { id: 'dsa', label: 'DSA Practice', icon: '💻', path: '/dsa' },
         { id: 'progress', label: 'Progress', icon: '📈', path: '/progress' },
-        { id: 'settings', label: 'Settings', icon: '⚙️', path: '/settings' }
+        { id: 'settings', label: 'Settings', icon: <span class="material-symbols-outlined">settings</span>, path: '/settings' }
     ]
 
     // handle click on menu item

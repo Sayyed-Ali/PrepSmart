@@ -73,15 +73,18 @@ function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
             <Sidebar onLogout={handleLogout} />
 
             <div className="flex-1 overflow-auto">
-                <div className="max-w-[1400px] mx-auto p-6 lg:p-10">
+                <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8">
 
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10">
+                    {/* HEADER */}
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
+
+                        {/* LEFT TEXT */}
                         <div>
-                            <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-2">
+                            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight mb-2">
                                 Hello, {user.name}! 👋
                             </h1>
                             <p className="text-gray-600 text-base lg:text-lg">
@@ -91,15 +94,19 @@ function Dashboard() {
                             </p>
                         </div>
 
+                        {/* RIGHT ACTIONS */}
                         <div className="flex items-center gap-4">
-                            <button className="relative w-11 h-11 bg-white rounded-xl flex items-center justify-center hover:shadow-lg transition-all">
+
+                            {/* NOTIFICATION */}
+                            <button className="relative w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200">
                                 <span className="text-lg">🔔</span>
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-semibold">
                                     0
                                 </span>
                             </button>
 
-                            <div className="flex items-center gap-3 bg-white py-2 px-4 rounded-full hover:shadow-lg transition-all cursor-pointer">
+                            {/* USER PROFILE */}
+                            <div className="flex items-center gap-3 bg-white py-2 px-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer">
                                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                                     {user.name.charAt(0).toUpperCase()}
                                 </div>
@@ -107,27 +114,45 @@ function Dashboard() {
                                     <h4 className="text-sm font-semibold text-gray-800">
                                         {user.name}
                                     </h4>
-                                    <p className="text-xs text-gray-500">{user.role}</p>
+                                    <p className="text-xs text-gray-500 capitalize">{user.role}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Pass real stats to StatsGrid */}
-                    <StatsGrid stats={stats} />
+                    {/* STATS */}
+                    <div className="mb-10">
+                        <StatsGrid stats={stats} />
+                    </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-8">
-                        <div className="xl:col-span-8 space-y-6">
-                            <WelcomeCard />
-                            {/* Pass real interviews data */}
-                            <RecentInterviews interviews={interviews.slice(0, 3)} />
+                    {/* MAIN GRID */}
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mb-10">
+
+                        {/* LEFT SECTION */}
+                        <div className="xl:col-span-8 space-y-8">
+
+                            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-6">
+                                <WelcomeCard />
+                            </div>
+
+                            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-6">
+                                <RecentInterviews interviews={interviews.slice(0, 3)} />
+                            </div>
                         </div>
+
+                        {/* RIGHT SECTION */}
                         <div className="xl:col-span-4">
-                            <CalendarWidget />
+                            <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-6">
+                                <CalendarWidget />
+                            </div>
                         </div>
                     </div>
 
-                    <ProgressChart />
+                    {/* PROGRESS */}
+                    <div className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-6">
+                        <ProgressChart />
+                    </div>
+
                 </div>
             </div>
         </div>

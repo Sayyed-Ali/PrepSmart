@@ -1,65 +1,80 @@
 const RecentInterviews = ({ interviews }) => {
-    // if no interviews, show empty state
+
     if (!interviews || interviews.length === 0) {
         return (
-            <div className="bg-white rounded-xl p-6 lg:p-7 shadow-sm">
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-800 mb-5">Recent Interviews</h3>
+            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                <h3 className="text-xl font-semibold text-gray-900 mb-6">
+                    Recent Interviews
+                </h3>
 
-                <div className="text-center py-12">
-                    <div className="text-6xl mb-4">🎤</div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-2">No interviews yet</h4>
-                    <p className="text-gray-600 mb-4">Start your first mock interview to see your progress here</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="text-6xl mb-4 opacity-80">🎤</div>
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                        No interviews yet
+                    </h4>
+                    <p className="text-gray-500 text-sm max-w-sm">
+                        Start your first mock interview and track your progress here.
+                    </p>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="bg-white rounded-xl p-6 lg:p-7 shadow-sm">
-            <div className="flex justify-between items-center mb-5">
-                <h3 className="text-xl lg:text-2xl font-bold text-gray-800">Recent Interviews</h3>
-                <span className="text-purple-600 font-semibold cursor-pointer hover:text-purple-700 text-sm lg:text-base">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+
+            {/* HEADER */}
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">
+                    Recent Interviews
+                </h3>
+
+                <span className="text-purple-600 font-medium cursor-pointer hover:underline text-sm">
                     View All →
                 </span>
             </div>
 
-            <div className="space-y-3">
+            {/* LIST */}
+            <div className="space-y-4">
                 {interviews.map((item, index) => {
-                    // calculate time ago
                     const timeAgo = getTimeAgo(new Date(item.createdAt))
 
                     return (
                         <div
                             key={item._id || index}
-                            className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-all cursor-pointer"
+                            className="flex justify-between items-center p-4 rounded-xl border border-gray-100 hover:shadow-md hover:bg-gray-50 transition-all"
                         >
-                            <div className="flex items-center gap-3">
-                                <div className="w-11 h-11 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-base flex-shrink-0">
+                            {/* LEFT */}
+                            <div className="flex items-center gap-4">
+
+                                <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center text-white font-bold">
                                     {item.company.charAt(0)}
                                 </div>
 
                                 <div>
-                                    <h4 className="font-semibold text-gray-800 text-sm lg:text-base">
-                                        {item.company} - {item.role}
+                                    <h4 className="font-semibold text-gray-900 text-sm">
+                                        {item.company} • {item.role}
                                     </h4>
-                                    <p className="text-xs lg:text-sm text-gray-600">
+
+                                    <p className="text-xs text-gray-500 mt-1">
                                         {timeAgo} • {item.interviewType}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="text-right flex-shrink-0">
+                            {/* RIGHT */}
+                            <div className="text-right">
                                 {item.status === 'completed' && item.feedback?.overallScore ? (
-                                    <>
-                                        <div className="text-2xl lg:text-3xl font-bold text-purple-600">
+                                    <div>
+                                        <div className="text-xl font-bold text-purple-600">
                                             {item.feedback.overallScore}
                                         </div>
                                         <div className="text-xs text-gray-500">Score</div>
-                                    </>
-                                ) : (
-                                    <div className="text-sm text-orange-600 font-semibold">
-                                        In Progress
                                     </div>
+                                ) : (
+                                    <span className="px-3 py-1 text-xs font-semibold bg-orange-100 text-orange-600 rounded-full">
+                                        In Progress
+                                    </span>
                                 )}
                             </div>
                         </div>
@@ -70,7 +85,6 @@ const RecentInterviews = ({ interviews }) => {
     )
 }
 
-// helper function to calculate time ago
 function getTimeAgo(date) {
     const seconds = Math.floor((new Date() - date) / 1000)
 

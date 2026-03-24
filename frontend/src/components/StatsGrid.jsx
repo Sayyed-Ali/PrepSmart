@@ -1,6 +1,6 @@
 // Stats cards component - shows 4 key metrics
 const StatsGrid = ({ stats }) => {
-    // use passed stats or defaults
+
     const displayStats = stats || {
         interviewsCompleted: 0,
         averageScore: 0,
@@ -13,48 +13,49 @@ const StatsGrid = ({ stats }) => {
             icon: '🎯',
             value: displayStats.interviewsCompleted.toString(),
             label: 'Interviews Done',
-            bgColor: 'bg-purple-100',
-            textColor: 'text-purple-600'
+            gradient: 'from-purple-500 to-indigo-500'
         },
         {
             icon: '⭐',
             value: displayStats.averageScore || '0',
             label: 'Average Score',
-            bgColor: 'bg-blue-100',
-            textColor: 'text-blue-600'
+            gradient: 'from-blue-500 to-cyan-500'
         },
         {
             icon: '📊',
             value: `${displayStats.timeSpent}h`,
             label: 'Time Practiced',
-            bgColor: 'bg-green-100',
-            textColor: 'text-green-600'
+            gradient: 'from-green-500 to-emerald-500'
         },
         {
             icon: '📝',
             value: displayStats.totalInterviews.toString(),
             label: 'Total Sessions',
-            bgColor: 'bg-orange-100',
-            textColor: 'text-orange-600'
+            gradient: 'from-orange-500 to-pink-500'
         }
     ]
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {statsData.map((stat, idx) => (
                 <div
                     key={idx}
-                    className="bg-white p-5 rounded-xl shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
+                    className="group bg-white/70 backdrop-blur-sm border border-gray-100 p-6 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
-                    <div className={`w-11 h-11 ${stat.bgColor} ${stat.textColor} rounded-lg flex items-center justify-center text-xl mb-3`}>
-                        {stat.icon}
+                    {/* ICON */}
+                    <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center text-xl mb-4 shadow-md`}>
+                        <span className="text-white">{stat.icon}</span>
                     </div>
 
-                    <div className="text-2xl lg:text-3xl font-bold text-gray-800 mb-1">
+                    {/* VALUE */}
+                    <div className="text-3xl font-bold text-gray-900 tracking-tight">
                         {stat.value}
                     </div>
 
-                    <div className="text-gray-600 text-xs lg:text-sm">{stat.label}</div>
+                    {/* LABEL */}
+                    <div className="text-gray-500 text-sm mt-1">
+                        {stat.label}
+                    </div>
                 </div>
             ))}
         </div>

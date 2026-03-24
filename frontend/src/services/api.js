@@ -96,4 +96,31 @@ export const interviewAPI = {
     }
 }
 
+// aptitude test functions
+export const aptitudeAPI = {
+    generateQuestions: async (category, difficulty, count = 10) => {
+        const response = await api.post('/aptitude/generate', {
+            category,
+            difficulty,
+            count
+        })
+        return response.data
+    },
+
+    submitTest: async (testData) => {
+        const response = await api.post('/aptitude/submit', testData)
+        return response.data
+    },
+
+    getUserResults: async (userId) => {
+        const response = await api.get(`/aptitude/results/${userId}`)
+        return response.data
+    },
+
+    getTestResult: async (testId) => {
+        const response = await api.get(`/aptitude/result/${testId}`)
+        return response.data
+    }
+}
+
 export default api

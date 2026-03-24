@@ -7,16 +7,19 @@ import Dashboard from './pages/Dashboard'
 import InterviewSetup from './pages/InterviewSetup'
 import Companies from './pages/Companies'
 import CompanyDetail from './pages/CompanyDetail'
-import AdminDashboard from './pages/Admin/AdminDashboard'  // Add this
+import AdminDashboard from './pages/Admin/AdminDashboard'
+import AptitudeSetup from './pages/AptitudeSetup'        // Add
+import AptitudeTest from './pages/AptitudeTest'          // Add
+import AptitudeResult from './pages/AptitudeResult'      // Add
+import AddCompany from './pages/Admin/AddCompany'           // Add
+import AddAptitudeQuestion from './pages/Admin/AddAptitudeQuestion'  // Add
 import './App.css'
 
-// protected route component
 function ProtectedRoute({ children }) {
   const isAuth = authAPI.isAuthenticated()
   return isAuth ? children : <Navigate to="/login" />
 }
 
-// admin route component
 function AdminRoute({ children }) {
   const isAuth = authAPI.isAuthenticated()
   const user = authAPI.getCurrentUser()
@@ -35,47 +38,20 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/interview-setup"
-            element={
-              <ProtectedRoute>
-                <InterviewSetup />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/companies"
-            element={
-              <ProtectedRoute>
-                <Companies />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/companies/:id"
-            element={
-              <ProtectedRoute>
-                <CompanyDetail />
-              </ProtectedRoute>
-            }
-          />
-          {/* Add admin route */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            }
-          />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/interview-setup" element={<ProtectedRoute><InterviewSetup /></ProtectedRoute>} />
+          <Route path="/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
+          <Route path="/companies/:id" element={<ProtectedRoute><CompanyDetail /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+
+          {/* Add aptitude routes */}
+          <Route path="/aptitude-setup" element={<ProtectedRoute><AptitudeSetup /></ProtectedRoute>} />
+          <Route path="/aptitude-test" element={<ProtectedRoute><AptitudeTest /></ProtectedRoute>} />
+          <Route path="/aptitude-result" element={<ProtectedRoute><AptitudeResult /></ProtectedRoute>} />
+
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin/add-company" element={<AdminRoute><AddCompany /></AdminRoute>} />
+          <Route path="/admin/add-aptitude-question" element={<AdminRoute><AddAptitudeQuestion /></AdminRoute>} />
         </Routes>
       </div>
     </Router>
