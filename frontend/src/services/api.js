@@ -98,11 +98,12 @@ export const interviewAPI = {
 
 // aptitude test functions
 export const aptitudeAPI = {
-    generateQuestions: async (category, difficulty, count = 10) => {
+    generateQuestions: async (category, difficulty, count = 10, companyId) => {
         const response = await api.post('/aptitude/generate', {
             category,
             difficulty,
-            count
+            count,
+            companyId
         })
         return response.data
     },

@@ -7,6 +7,7 @@ import WelcomeCard from '../components/WelcomeCard'
 import RecentInterviews from '../components/RecentInterviews'
 import CalendarWidget from '../components/CalendarWidget'
 import ProgressChart from '../components/ProgressChart'
+import { color } from 'chart.js/helpers'
 
 function Dashboard() {
     const navigate = useNavigate()
@@ -85,7 +86,7 @@ function Dashboard() {
                         {/* LEFT TEXT */}
                         <div>
                             <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight mb-2">
-                                Hello, {user.name}! 👋
+                                Hello, {user.name}!
                             </h1>
                             <p className="text-gray-600 text-base lg:text-lg">
                                 {stats.totalInterviews === 0
@@ -99,7 +100,7 @@ function Dashboard() {
 
                             {/* NOTIFICATION */}
                             <button className="relative w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200">
-                                <span className="text-lg">🔔</span>
+                                <span className="text-lg"><span className="material-symbols-outlined" style={{ color: '#F19E39' }}>notifications_unread</span></span>
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-semibold">
                                     0
                                 </span>

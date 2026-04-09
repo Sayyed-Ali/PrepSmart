@@ -22,7 +22,7 @@ const StatsGrid = ({ stats }) => {
             gradient: 'from-blue-500 to-cyan-500'
         },
         {
-            icon: '📊',
+            icon: <span class="material-symbols-outlined">exercise</span>,
             value: `${displayStats.timeSpent}h`,
             label: 'Time Practiced',
             gradient: 'from-green-500 to-emerald-500'

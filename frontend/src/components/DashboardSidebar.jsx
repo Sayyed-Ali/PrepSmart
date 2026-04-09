@@ -7,13 +7,13 @@ const DashboardSidebar = ({ onLogout }) => {
 
     // all menu items with icons
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: '📊', path: '/dashboard' },
-        { id: 'interview', label: 'Mock Interview', icon: '🎤', path: '/interview-setup' },
-        { id: 'companies', label: 'Companies', icon: '🏢', path: '/companies' },
-        { id: 'aptitude', label: 'Aptitude Tests', icon: '📝', path: '/aptitude-setup' },  // Update this
-        { id: 'dsa', label: 'DSA Practice', icon: '💻', path: '/dsa' },
-        { id: 'progress', label: 'Progress', icon: '📈', path: '/progress' },
-        { id: 'settings', label: 'Settings', icon: <span class="material-symbols-outlined">settings</span>, path: '/settings' }
+        { id: 'dashboard', label: 'Dashboard', icon: <span class="material-symbols-outlined">dashboard</span>, path: '/dashboard' },
+        { id: 'interview', label: 'Mock Interview', icon: <span class="material-symbols-outlined">frame_person_mic</span>, path: '/interview-setup' },
+        { id: 'companies', label: 'Companies', icon: <span class="material-symbols-outlined">corporate_fare</span>, path: '/companies' },
+        { id: 'aptitude', label: 'Aptitude Tests', icon: <span class="material-symbols-outlined">auto_stories</span>, path: '/aptitude-setup' },
+        { id: 'dsa', label: 'DSA Practice', icon: <span class="material-symbols-outlined">code_blocks</span>, path: '/dsa' },
+        { id: 'progress', label: 'Progress', icon: <span class="material-symbols-outlined">bar_chart_4_bars</span>, path: '/progress' },
+        { id: 'settings', label: 'Settings', icon: <span className="material-symbols-outlined">settings</span>, path: '/settings' }
     ]
 
     // handle click on menu item
@@ -31,9 +31,11 @@ const DashboardSidebar = ({ onLogout }) => {
         <div className="w-64 bg-gradient-to-b from-purple-600 to-indigo-700 flex-shrink-0 p-5 flex flex-col min-h-screen">
             {/* logo at top */}
             <div className="pb-5 mb-6 border-b border-white/20">
-                <h2 className="text-white text-xl font-bold flex items-center gap-2">
-                    🎯 PrepSmart
+                <h2 className="text-white text-3xl font-bold flex items-center gap-3">
+                    <span className="text-4xl">🎯</span>
+                    PrepSmart
                 </h2>
+
             </div>
 
             {/* navigation links */}
@@ -64,7 +66,7 @@ const DashboardSidebar = ({ onLogout }) => {
                     onClick={onLogout}
                     className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white mt-4"
                 >
-                    <span className="text-lg">🚪</span>
+                    <span className="text-lg"><span class="material-symbols-outlined">logout</span></span>
                     <span>Logout</span>
                 </button>
             )}

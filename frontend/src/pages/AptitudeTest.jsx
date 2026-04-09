@@ -5,7 +5,7 @@ import { authAPI, aptitudeAPI } from '../services/api'
 function AptitudeTest() {
     const navigate = useNavigate()
     const location = useLocation()
-    const { category, difficulty, count } = location.state || {}
+    const { category, difficulty, count, companyId } = location.state || {}
 
     const [user, setUser] = useState(null)
     const [questions, setQuestions] = useState([])
@@ -47,7 +47,12 @@ function AptitudeTest() {
 
     const loadQuestions = async () => {
         try {
-            const response = await aptitudeAPI.generateQuestions(category, difficulty, count)
+            const response = await aptitudeAPI.generateQuestions(
+                category,
+                difficulty,
+                count,
+                companyId
+            )
             console.log('Questions loaded:', response)
             setQuestions(response.questions)
         } catch (error) {
@@ -189,14 +194,14 @@ function AptitudeTest() {
                                 key={index}
                                 onClick={() => setSelectedAnswer(option)}
                                 className={`w-full p-4 rounded-xl border-2 text-left transition-all ${selectedAnswer === option
-                                        ? 'border-blue-600 bg-blue-50'
-                                        : 'border-gray-200 hover:border-blue-300'
+                                    ? 'border-blue-600 bg-blue-50'
+                                    : 'border-gray-200 hover:border-blue-300'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">
                                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedAnswer === option
-                                            ? 'border-blue-600 bg-blue-600'
-                                            : 'border-gray-300'
+                                        ? 'border-blue-600 bg-blue-600'
+                                        : 'border-gray-300'
                                         }`}>
                                         {selectedAnswer === option && (
                                             <div className="w-2 h-2 bg-white rounded-full" />

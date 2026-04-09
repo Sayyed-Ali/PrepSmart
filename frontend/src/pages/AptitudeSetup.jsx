@@ -5,6 +5,7 @@ import { authAPI } from '../services/api'
 function AptitudeSetup() {
     const navigate = useNavigate()
     const [user, setUser] = useState(null)
+    const [selectedCompany, setSelectedCompany] = useState('')
     const [selectedCategory, setSelectedCategory] = useState('')
     const [selectedDifficulty, setSelectedDifficulty] = useState('')
     const [questionCount, setQuestionCount] = useState(10)
@@ -55,7 +56,8 @@ function AptitudeSetup() {
             state: {
                 category: selectedCategory,
                 difficulty: selectedDifficulty,
-                count: questionCount
+                count: questionCount,
+                companyId: selectedCompany || null
             }
         })
     }
@@ -81,6 +83,28 @@ function AptitudeSetup() {
                     </p>
                 </div>
 
+                {/* ✅ ADD THIS SECTION - Company Selection */}
+                <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                    <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                        Select Company (Optional)
+                    </h2>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Get company-specific questions mixed with AI-generated ones
+                    </p>
+                    <select
+                        value={selectedCompany}
+                        onChange={(e) => setSelectedCompany(e.target.value)}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+                        <option value="">General (No specific company)</option>
+                        <option value="google">Google</option>
+                        <option value="amazon">Amazon</option>
+                        <option value="microsoft">Microsoft</option>
+                        <option value="meta">Meta</option>
+                        <option value="apple">Apple</option>
+                    </select>
+                </div>
+
                 {/* Category Selection */}
                 <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -92,8 +116,8 @@ function AptitudeSetup() {
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
                                 className={`p-6 rounded-xl border-2 transition-all text-left ${selectedCategory === cat.id
-                                        ? 'border-blue-600 bg-blue-50'
-                                        : 'border-gray-200 hover:border-blue-300'
+                                    ? 'border-blue-600 bg-blue-50'
+                                    : 'border-gray-200 hover:border-blue-300'
                                     }`}
                             >
                                 <div className="text-4xl mb-3">{cat.icon}</div>
@@ -115,8 +139,8 @@ function AptitudeSetup() {
                                 key={diff.id}
                                 onClick={() => setSelectedDifficulty(diff.id)}
                                 className={`p-4 rounded-xl border-2 transition-all ${selectedDifficulty === diff.id
-                                        ? `border-${diff.color}-600 bg-${diff.color}-50`
-                                        : 'border-gray-200 hover:border-gray-300'
+                                    ? `border-${diff.color}-600 bg-${diff.color}-50`
+                                    : 'border-gray-200 hover:border-gray-300'
                                     }`}
                             >
                                 <div className="text-3xl mb-2">{diff.icon}</div>
@@ -159,7 +183,7 @@ function AptitudeSetup() {
                                 <li>• Each question has a time limit of 60 seconds</li>
                                 <li>• You cannot go back to previous questions</li>
                                 <li>• Results will be shown immediately after completion</li>
-                                <li>• All questions are auto-generated using AI</li>
+                                <li>• {selectedCompany ? 'Questions include company-specific and AI-generated' : 'All questions are auto-generated using AI'}</li>
                             </ul>
                         </div>
                     </div>
