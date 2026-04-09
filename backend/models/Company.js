@@ -44,6 +44,24 @@ const companySchema = new mongoose.Schema({
         }
     }],
 
+    aptitudeQuestions: [{
+        question: String,
+        category: {
+            type: String,
+            enum: ['quantitative', 'logical', 'verbal', 'general']
+        },
+        difficulty: {
+            type: String,
+            enum: ['easy', 'medium', 'hard']
+        },
+        options: [{
+            text: String,
+            isCorrect: Boolean
+        }],
+        correctAnswer: String,
+        explanation: String
+    }],
+
     // company culture
     culture: {
         values: [String],

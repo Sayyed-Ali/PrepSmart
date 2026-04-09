@@ -142,4 +142,75 @@ router.get('/result/:testId', async (req, res) => {
     }
 })
 
+router.post('/generate', async (req, res) => {
+    try {
+        const { category, difficulty, count, companyId, jobDescription, userProfile } = req.body
+
+        if (!category || !difficulty) {
+            return res.status(400).json({
+                success: false,
+                message: 'Category and difficulty are required'
+            })
+        }
+
+        let allQuestions = []
+
+        // 1. Get company-specific fixed questions (if companyId provided)
+        if (companyId) {
+            const Company = require('../models/Company')
+            const company = await Company.findById(companyId)
+
+            if (company && company.aptitudeQuestions) {
+                // filter by category and difficulty
+                const fixedQuestions = company.aptitudeQuestions.filter(q =>
+                    q.category === category && q.difficulty === difficulty
+                )
+
+                // take up to 5 fixed questions
+                const selectedFixed = fixedQuestions.slice(0, Math.min(5, fixedQuestions.length))
+                allQuestions = [...selectedFixed]
+
+                console.log(`Added ${selectedFixed.length} fixed questions for ${company.name}`)
+            }
+        }
+
+        // 2. Generate AI questions for remaining count
+        const remainingCount = (count || 10) - allQuestions.length
+
+        if (remainingCount > 0) {
+            const { generateAptitudeQuestions } = require('../services/aiService')
+
+            // TODO: Later pass jobDescription and userProfile to OpenAI
+            const aiQuestions = await generateAptitudeQuestions(
+                category,
+                difficulty,
+                remainingCount
+            )
+
+            allQuestions = [...allQuestions, ...aiQuestions]
+            console.log(`Added ${aiQuestions.length} AI-generated questions`)
+        }
+
+        // 3. Shuffle to mix fixed and AI questions
+        const shuffled = allQuestions.sort(() => 0.5 - Math.random())
+
+        res.json({
+            success: true,
+            count: shuffled.length,
+            questions: shuffled,
+            breakdown: {
+                fixed: allQuestions.length - (remainingCount > 0 ? remainingCount : 0),
+                ai: remainingCount > 0 ? remainingCount : 0
+            }
+        })
+
+    } catch (error) {
+        console.error('Error generating questions:', error)
+        res.status(500).json({
+            success: false,
+            message: 'Error generating questions'
+        })
+    }
+})
+
 module.exports = router

@@ -32,13 +32,13 @@ const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
 const interviewRoutes = require('./routes/interviewRoutes')
 const adminRoutes = require('./routes/adminRoutes')
-const aptitudeRoutes = require('./routes/aptitudeRoutes')  // Add this
+const aptitudeRoutes = require('./routes/aptitudeRoutes')
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/interviews', interviewRoutes)
 app.use('/api/admin', adminRoutes)
-app.use('/api/aptitude', aptitudeRoutes)  // Add this
+app.use('/api/aptitude', aptitudeRoutes)
 
 app.use((err, req, res, next) => {
     console.error('Error:', err.message)
