@@ -152,8 +152,8 @@ function InterviewSetup() {
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 {/* Technical */}
                                 <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'technical'
-                                        ? 'border-purple-600 bg-purple-50'
-                                        : 'border-gray-200 hover:border-purple-300'
+                                    ? 'border-purple-600 bg-purple-50'
+                                    : 'border-gray-200 hover:border-purple-300'
                                     }`}>
                                     <input
                                         type="radio"
@@ -172,8 +172,8 @@ function InterviewSetup() {
 
                                 {/* Behavioral */}
                                 <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'behavioral'
-                                        ? 'border-purple-600 bg-purple-50'
-                                        : 'border-gray-200 hover:border-purple-300'
+                                    ? 'border-purple-600 bg-purple-50'
+                                    : 'border-gray-200 hover:border-purple-300'
                                     }`}>
                                     <input
                                         type="radio"
@@ -192,8 +192,8 @@ function InterviewSetup() {
 
                                 {/* Mixed */}
                                 <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'mixed'
-                                        ? 'border-purple-600 bg-purple-50'
-                                        : 'border-gray-200 hover:border-purple-300'
+                                    ? 'border-purple-600 bg-purple-50'
+                                    : 'border-gray-200 hover:border-purple-300'
                                     }`}>
                                     <input
                                         type="radio"

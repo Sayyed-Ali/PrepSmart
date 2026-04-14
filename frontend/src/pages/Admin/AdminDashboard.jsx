@@ -30,10 +30,10 @@ function AdminDashboard() {
     }
 
     const tabs = [
-        { id: 'overview', label: 'Overview', icon: '📊' },
-        { id: 'companies', label: 'Manage Companies', icon: '🏢' },
-        { id: 'users', label: 'Manage Users', icon: '👥' },
-        { id: 'questions', label: 'Questions Bank', icon: '❓' }
+        { id: 'overview', label: 'Overview', icon: '' },
+        { id: 'companies', label: 'Manage Companies', icon: '' },
+        { id: 'users', label: 'Manage Users', icon: '' },
+        { id: 'questions', label: 'Questions Bank', icon: '' }
     ]
 
     return (
@@ -43,7 +43,7 @@ function AdminDashboard() {
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     <div className="flex justify-between items-center">
                         <div>
-                            <h1 className="text-3xl font-bold mb-2">🔧 Admin Panel</h1>
+                            <h1 className="text-3xl font-bold mb-2">Admin Panel</h1>
                             <p className="text-white/90">Manage PrepSmart platform</p>
                         </div>
                         <button
@@ -114,25 +114,25 @@ function OverviewTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-600">
-                    <div className="text-3xl mb-2">👥</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalUsers}</div>
                     <div className="text-gray-600">Total Users</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-600">
-                    <div className="text-3xl mb-2">🏢</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalCompanies}</div>
                     <div className="text-gray-600">Companies</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-600">
-                    <div className="text-3xl mb-2">🎤</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalInterviews}</div>
                     <div className="text-gray-600">Interviews</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-600">
-                    <div className="text-3xl mb-2">⚡</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.activeToday}</div>
                     <div className="text-gray-600">Active Today</div>
                 </div>
@@ -142,19 +142,19 @@ function OverviewTab() {
                 <h3 className="text-xl font-bold mb-4">Quick Actions</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">➕</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">Add Company</div>
                         <div className="text-sm text-gray-600">Add new company data</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">📤</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">Bulk Upload</div>
                         <div className="text-sm text-gray-600">Import companies via JSON</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">📊</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">View Reports</div>
                         <div className="text-sm text-gray-600">Platform analytics</div>
                     </button>
