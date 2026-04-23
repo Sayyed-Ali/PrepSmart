@@ -41,9 +41,9 @@ function AptitudeSetup() {
     ]
 
     const difficulties = [
-        { id: 'easy', name: 'Easy', color: 'green', icon: '😊' },
-        { id: 'medium', name: 'Medium', color: 'yellow', icon: '😐' },
-        { id: 'hard', name: 'Hard', color: 'red', icon: '😰' }
+        { id: 'easy', name: 'Easy', color: 'green', icon: '' },
+        { id: 'medium', name: 'Medium', color: 'yellow', icon: '' },
+        { id: 'hard', name: 'Hard', color: 'red', icon: '' }
     ]
 
     const handleStart = () => {
@@ -76,7 +76,7 @@ function AptitudeSetup() {
                         ← Back to Dashboard
                     </button>
                     <h1 className="text-4xl font-bold text-gray-800 mb-3">
-                        📝 Aptitude Test
+                        Aptitude Test
                     </h1>
                     <p className="text-gray-600 text-lg">
                         Test your skills and improve your placement preparation
@@ -176,7 +176,6 @@ function AptitudeSetup() {
                 {/* Info Box */}
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6">
                     <div className="flex gap-4">
-                        <div className="text-3xl">ℹ️</div>
                         <div>
                             <h4 className="font-bold text-blue-900 mb-2">Test Guidelines</h4>
                             <ul className="text-sm text-blue-800 space-y-1">
@@ -195,7 +194,7 @@ function AptitudeSetup() {
                     disabled={!selectedCategory || !selectedDifficulty}
                     className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Start Test 🚀
+                    Start Test
                 </button>
             </div>
         </div>

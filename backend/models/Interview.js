@@ -1,6 +1,50 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-// schema for storing interview sessions
+// Question subdocument schema
+const questionSchema = new mongoose.Schema({
+    id: {
+        type: Number,
+        required: true
+    },
+    question: {
+        type: String,
+        required: true
+    },
+    difficulty: {
+        type: String,
+        enum: ['easy', 'medium', 'hard'],
+        default: 'medium'
+    },
+    type: {
+        type: String,
+        enum: ['technical', 'behavioral', 'mixed'],
+        required: true
+    },
+    expectedAnswer: {
+        type: String,
+        default: ''
+    },
+    userAnswer: {
+        type: String,
+        default: ''
+    },
+    evaluation: {
+        score: {
+            type: Number,
+            min: 0,
+            max: 10
+        },
+        strengths: [String],
+        improvements: [String],
+        idealApproach: String
+    },
+    timeTaken: {
+        type: Number,
+        default: 0
+    }
+}, { _id: false });
+
+// Main Interview schema
 const interviewSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,44 +59,55 @@ const interviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    interviewType: {
+    type: {
         type: String,
         enum: ['technical', 'behavioral', 'mixed'],
-        default: 'mixed'
+        required: true
     },
-    // storing questions and answers
-    questions: [{
-        question: String,
-        answer: String,
-        questionType: String,
-        score: Number
-    }],
-    // overall feedback
-    feedback: {
-        overallScore: {
-            type: Number,
-            default: 0
-        },
-        technicalScore: Number,
-        communicationScore: Number,
-        strengths: [String],
-        improvements: [String],
-        detailedFeedback: String
+    jobDescription: {
+        type: String,
+        default: ''
     },
-    // metadata
-    duration: Number,  // in minutes
+    resumeText: {
+        type: String,
+        default: ''
+    },
+    resumeFileName: {
+        type: String,
+        default: ''
+    },
+    questions: [questionSchema],  // ✅ THIS IS THE FIX!
     status: {
         type: String,
         enum: ['in-progress', 'completed', 'abandoned'],
         default: 'in-progress'
     },
-    createdAt: {
+    overallScore: {
+        type: Number,
+        min: 0,
+        max: 100,
+        default: 0
+    },
+    feedback: {
+        strengths: [String],
+        improvements: [String],
+        recommendations: [String]
+    },
+    startedAt: {
         type: Date,
         default: Date.now
     },
-    completedAt: Date
-})
+    completedAt: {
+        type: Date
+    },
+    duration: {
+        type: Number,
+        default: 0
+    }
+}, {
+    timestamps: true
+});
 
-const Interview = mongoose.model('Interview', interviewSchema)
+const Interview = mongoose.model('Interview', interviewSchema);
 
-module.exports = Interview
+module.exports = Interview;

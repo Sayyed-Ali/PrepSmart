@@ -1,132 +1,315 @@
-// AI service to generate aptitude questions
-// for now we'll use hardcoded questions, but structured to easily add OpenAI later
+// COMPLETE FILE - Copy exactly as is
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const generateAptitudeQuestions = async (category, difficulty, count = 10) => {
-    // TODO: integrate OpenAI API later for dynamic generation
-    // For now, return sample questions
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
-    const questionBank = {
+const generateAptitudeQuestions = async (category, difficulty, count = 10, companyId = null) => {
+    try {
+        const companyContext = companyId
+            ? `Focus on questions commonly asked in ${companyId} interviews.`
+            : '';
+
+        const prompt = `Generate ${count} ${difficulty} ${category} aptitude questions.
+${companyContext}
+
+IMPORTANT: Return ONLY valid JSON. No markdown, no explanation, no backticks.
+
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is 2 + 2?",
+      "options": ["2", "3", "4", "5"],
+      "correctAnswer": "4",
+      "explanation": "Basic addition: 2 + 2 = 4"
+    }
+  ]
+}`;
+
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: {
+                temperature: 0.7,
+                maxOutputTokens: 2000,
+                responseMimeType: "application/json"  // ✅ Force JSON response
+            }
+        });
+
+        const result = await model.generateContent(prompt);
+        const response = result.response;
+        let content = response.text().trim();
+
+        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+        const data = JSON.parse(content);
+        return data.questions || [];
+
+    } catch (error) {
+        console.error('Gemini API error:', error.message);
+        return getHardcodedQuestions(category, difficulty, count);
+    }
+};
+
+const generateInterviewQuestions = async ({ company, role, type, jobDescription, resumeText }) => {
+    try {
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: {
+                temperature: 0.8,
+                maxOutputTokens: 2500,
+                responseMimeType: "application/json"  // ✅ Force JSON response
+            }
+        });
+
+        const prompt = `Generate 5 ${type} interview questions for a ${role} position at ${company}.
+
+${jobDescription ? `Job Description: ${jobDescription.substring(0, 500)}` : ''}
+${resumeText ? `Resume: ${resumeText.substring(0, 500)}` : ''}
+
+IMPORTANT: Return ONLY valid JSON. No markdown, no explanation.
+
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is your question here?",
+      "difficulty": "medium",
+      "type": "${type}",
+      "expectedAnswer": "Brief answer guide"
+    }
+  ]
+}`;
+
+        console.log(`Generating ${type} interview questions for ${role} at ${company}...`);
+
+        const result = await model.generateContent(prompt);
+        let content = result.response.text().trim();
+
+        // Clean markdown
+        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+        // Parse JSON
+        const data = JSON.parse(content);
+
+        // ✅ Validate and return
+        if (data.questions && Array.isArray(data.questions)) {
+            return data.questions;
+        }
+
+        throw new Error('Invalid response format');
+
+    } catch (error) {
+        console.error('AI generation failed:', error.message);
+        // ✅ Return fallback questions
+        return getDefaultInterviewQuestions(type);
+    }
+};
+
+const evaluateInterviewAnswer = async (question, answer, role, company) => {
+    if (!answer || answer.trim().length < 20) {
+        return {
+            score: 2,
+            strengths: ["Answer provided", "Attempted the question"],
+            improvements: ["Add much more detail", "Include specific examples", "Explain reasoning thoroughly"],
+            idealApproach: "Provide a detailed, structured response with concrete examples"
+        };
+    }
+
+    try {
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash",
+            generationConfig: {
+                temperature: 0.5,
+                maxOutputTokens: 800,
+                responseMimeType: "application/json"
+            }
+        });
+
+        const prompt = `Score this interview answer from 1-10. Return ONLY this JSON format with NO newlines:
+
+{"score":7,"strengths":["point1","point2","point3"],"improvements":["point1","point2","point3"],"idealApproach":"brief summary"}
+
+Question: ${question.substring(0, 200)}
+Answer: ${answer.substring(0, 500)}`;
+
+        const result = await model.generateContent(prompt);
+        let content = result.response.text().trim();
+
+        // ✅ DEBUG: Log raw response
+        console.log('🔍 RAW GEMINI RESPONSE:', content);
+        console.log('🔍 LENGTH:', content.length);
+
+        content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+        // ✅ DEBUG: Log cleaned response
+        console.log('🔍 CLEANED RESPONSE:', content);
+
+        const parsed = JSON.parse(content);
+
+        console.log('✅ PARSED SUCCESSFULLY:', parsed);
+
+        return {
+            score: Math.min(10, Math.max(1, Number(parsed.score))) || 5,
+            strengths: (parsed.strengths || []).slice(0, 3),
+            improvements: (parsed.improvements || []).slice(0, 3),
+            idealApproach: String(parsed.idealApproach || "Structured response").substring(0, 150)
+        };
+
+    } catch (error) {
+        console.log('❌ GEMINI ERROR:', error.message);
+        console.log('AI evaluation failed, using smart fallback');
+
+        const words = answer.trim().split(/\s+/).length;
+        const hasExamples = /example|instance|such as|like|for example/i.test(answer);
+        const hasStructure = /first|second|finally|additionally|furthermore/i.test(answer);
+
+        let score = 5;
+        if (words > 150) score += 1;
+        if (words > 250) score += 1;
+        if (hasExamples) score += 1;
+        if (hasStructure) score += 1;
+
+        return {
+            score: Math.min(10, score),
+            strengths: [
+                words > 100 ? "Detailed response" : "Answer provided",
+                hasExamples ? "Included examples" : "Addressed question",
+                hasStructure ? "Well structured" : "Attempted explanation"
+            ],
+            improvements: [
+                words < 100 ? "Add more detail" : "Further refine",
+                !hasExamples ? "Include concrete examples" : "Add more cases",
+                !hasStructure ? "Use clearer structure" : "Enhance flow"
+            ],
+            idealApproach: "Provide well-structured response with specific examples and clear reasoning"
+        };
+    }
+};
+
+// ✅ Default fallback questions
+const getDefaultInterviewQuestions = (type) => {
+    const technical = [
+        {
+            id: 1,
+            question: "Explain the difference between var, let, and const in JavaScript.",
+            difficulty: "easy",
+            type: "technical",
+            expectedAnswer: "Explain scope, hoisting, and reassignment"
+        },
+        {
+            id: 2,
+            question: "How would you optimize a slow database query?",
+            difficulty: "medium",
+            type: "technical",
+            expectedAnswer: "Discuss indexing and caching"
+        },
+        {
+            id: 3,
+            question: "Design a URL shortener. What are the key components?",
+            difficulty: "hard",
+            type: "technical",
+            expectedAnswer: "System design: hashing, database, scalability"
+        },
+        {
+            id: 4,
+            question: "What is the time complexity of common sorting algorithms?",
+            difficulty: "medium",
+            type: "technical",
+            expectedAnswer: "O(n log n) for merge/quick sort"
+        },
+        {
+            id: 5,
+            question: "How do you handle errors in production code?",
+            difficulty: "medium",
+            type: "technical",
+            expectedAnswer: "Try-catch, logging, monitoring"
+        }
+    ];
+
+    const behavioral = [
+        {
+            id: 1,
+            question: "Tell me about a time you worked with a difficult team member.",
+            difficulty: "medium",
+            type: "behavioral",
+            expectedAnswer: "STAR format response"
+        },
+        {
+            id: 2,
+            question: "Describe a project where you learned a new technology quickly.",
+            difficulty: "medium",
+            type: "behavioral",
+            expectedAnswer: "Show learning ability"
+        },
+        {
+            id: 3,
+            question: "How do you prioritize tasks with multiple deadlines?",
+            difficulty: "easy",
+            type: "behavioral",
+            expectedAnswer: "Time management approach"
+        },
+        {
+            id: 4,
+            question: "Tell me about a time you failed.",
+            difficulty: "medium",
+            type: "behavioral",
+            expectedAnswer: "Show growth mindset"
+        },
+        {
+            id: 5,
+            question: "Why do you want to work at our company?",
+            difficulty: "easy",
+            type: "behavioral",
+            expectedAnswer: "Research and alignment"
+        }
+    ];
+
+    return type === 'behavioral' ? behavioral : technical;
+};
+
+const getHardcodedQuestions = (category, difficulty, count) => {
+    const questions = {
         quantitative: [
             {
-                question: "If a train travels 60 km in 45 minutes, what is its speed in km/hr?",
+                id: 1,
+                question: "If a train travels 60 km in 45 minutes, what is its speed in km/h?",
                 options: ["70", "75", "80", "85"],
                 correctAnswer: "80",
-                explanation: "Speed = Distance/Time = 60/(45/60) = 60/(3/4) = 80 km/hr"
+                explanation: "Speed = 60/(45/60) = 80 km/h"
             },
             {
+                id: 2,
                 question: "What is 15% of 200?",
                 options: ["25", "30", "35", "40"],
                 correctAnswer: "30",
-                explanation: "15% of 200 = (15/100) × 200 = 30"
-            },
-            {
-                question: "If x + 5 = 12, what is the value of x?",
-                options: ["5", "6", "7", "8"],
-                correctAnswer: "7",
-                explanation: "x = 12 - 5 = 7"
-            },
-            {
-                question: "A shopkeeper offers 20% discount on marked price. If marked price is ₹500, what is selling price?",
-                options: ["₹400", "₹420", "₹450", "₹480"],
-                correctAnswer: "₹400",
-                explanation: "Selling price = 500 - (20% of 500) = 500 - 100 = ₹400"
-            },
-            {
-                question: "What is the next number in series: 2, 6, 12, 20, ?",
-                options: ["28", "30", "32", "36"],
-                correctAnswer: "30",
-                explanation: "Difference increases by 2 each time: +4, +6, +8, +10"
+                explanation: "15% of 200 = 30"
             }
         ],
         logical: [
             {
-                question: "If all roses are flowers and some flowers fade quickly, can we conclude that some roses fade quickly?",
-                options: ["Yes", "No", "Cannot be determined", "Depends on season"],
-                correctAnswer: "Cannot be determined",
-                explanation: "We cannot determine which specific flowers fade quickly"
-            },
-            {
-                question: "Complete the pattern: A, C, F, J, ?",
-                options: ["M", "N", "O", "P"],
-                correctAnswer: "O",
-                explanation: "Gaps increase: +2, +3, +4, +5"
-            },
-            {
-                question: "If CODE is written as DPEF, how is MIND written?",
-                options: ["NKOE", "NJOE", "NJNE", "NKNE"],
-                correctAnswer: "NJOE",
-                explanation: "Each letter is shifted by +1"
-            },
-            {
-                question: "Which one is different: Apple, Mango, Banana, Potato?",
-                options: ["Apple", "Mango", "Banana", "Potato"],
-                correctAnswer: "Potato",
-                explanation: "Potato is a vegetable, others are fruits"
-            },
-            {
-                question: "If SISTER = 535301, BROTHER = ?",
-                options: ["2935103", "2935301", "2935310", "2953103"],
-                correctAnswer: "2935103",
-                explanation: "S=5, I=3, T=0, E=1, R=1, B=2, O=9, H=3"
+                id: 1,
+                question: "What comes next: 2, 6, 12, 20, 30, ?",
+                options: ["40", "42", "44", "46"],
+                correctAnswer: "42",
+                explanation: "Differences are 4, 6, 8, 10, 12"
             }
         ],
         verbal: [
             {
+                id: 1,
                 question: "Choose the synonym of 'Abundant':",
-                options: ["Scarce", "Plentiful", "Rare", "Limited"],
+                options: ["Scarce", "Plentiful", "Lacking", "Rare"],
                 correctAnswer: "Plentiful",
-                explanation: "Abundant means existing in large quantities"
-            },
-            {
-                question: "Choose the antonym of 'Transparent':",
-                options: ["Clear", "Opaque", "Visible", "Bright"],
-                correctAnswer: "Opaque",
-                explanation: "Opaque means not able to be seen through"
-            },
-            {
-                question: "Complete the analogy: Book : Author :: Painting : ?",
-                options: ["Canvas", "Artist", "Museum", "Color"],
-                correctAnswer: "Artist",
-                explanation: "As author creates book, artist creates painting"
-            },
-            {
-                question: "Which sentence is grammatically correct?",
-                options: [
-                    "She don't like coffee",
-                    "She doesn't likes coffee",
-                    "She doesn't like coffee",
-                    "She not like coffee"
-                ],
-                correctAnswer: "She doesn't like coffee",
-                explanation: "Subject-verb agreement with singular subject"
-            },
-            {
-                question: "Identify the error: 'Neither of the students have completed their homework.'",
-                options: ["Neither", "have", "completed", "No error"],
-                correctAnswer: "have",
-                explanation: "'Neither' is singular, should use 'has'"
+                explanation: "Abundant means plentiful"
             }
         ]
-    }
+    };
 
-    // get questions for the category
-    const categoryQuestions = questionBank[category] || questionBank.quantitative
+    return (questions[category] || questions.quantitative).slice(0, count);
+};
 
-    // shuffle and pick random questions
-    const shuffled = categoryQuestions.sort(() => 0.5 - Math.random())
-    const selected = shuffled.slice(0, Math.min(count, categoryQuestions.length))
-
-    // format questions
-    return selected.map((q, index) => ({
-        id: `${category}_${Date.now()}_${index}`,
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-        explanation: q.explanation,
-        category,
-        difficulty,
-        createdBy: 'ai'
-    }))
-}
-
-module.exports = { generateAptitudeQuestions }
+module.exports = {
+    generateAptitudeQuestions,
+    generateInterviewQuestions,
+    evaluateInterviewAnswer
+};

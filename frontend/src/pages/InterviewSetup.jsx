@@ -1,270 +1,272 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authAPI, interviewAPI } from '../services/api'
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authAPI, interviewAPI } from '../services/api';
 
 function InterviewSetup() {
-    const navigate = useNavigate()
-    const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
+    const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    // form data
     const [formData, setFormData] = useState({
         company: '',
         role: '',
-        interviewType: 'mixed'
-    })
+        type: 'technical',
+        jobDescription: '',
+        resume: null
+    });
 
-    // list of companies - hardcoded for now
+    useEffect(() => {
+        const currentUser = authAPI.getCurrentUser();
+        if (!currentUser) {
+            navigate('/login');
+        } else {
+            setUser(currentUser);
+        }
+    }, [navigate]);
+
     const companies = [
         'Google', 'Amazon', 'Microsoft', 'Meta', 'Apple',
-        'Netflix', 'Tesla', 'Uber', 'Airbnb', 'Salesforce',
-        'Adobe', 'Oracle', 'IBM', 'Intel', 'Cisco'
-    ]
+        'Netflix', 'Tesla', 'Adobe', 'Salesforce', 'Oracle',
+        'IBM', 'Intel', 'Cisco', 'VMware', 'Uber',
+        'TCS', 'Infosys', 'Wipro', 'Accenture', 'Cognizant'
+    ];
 
-    // get current user
-    useEffect(() => {
-        const currentUser = authAPI.getCurrentUser()
-        if (!currentUser) {
-            navigate('/login')
-        } else {
-            setUser(currentUser)
-        }
-    }, [navigate])
-
-    // handle input changes
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
-    }
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-    // handle form submission
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file && file.size > 5 * 1024 * 1024) {
+            alert('File size should be less than 5MB');
+            return;
+        }
+        setFormData(prev => ({ ...prev, resume: file }));
+    };
+
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        setError('')
-        setLoading(true)
+        e.preventDefault();
+
+        if (!formData.company || !formData.role || !formData.type) {
+            alert('Please fill all required fields');
+            return;
+        }
 
         try {
-            // create interview session
-            const interviewData = {
-                userId: user.id,
-                company: formData.company,
-                role: formData.role,
-                interviewType: formData.interviewType
+            setLoading(true);
+
+            const submitData = new FormData();
+            submitData.append('company', formData.company);
+            submitData.append('role', formData.role);
+            submitData.append('type', formData.type);
+            submitData.append('jobDescription', formData.jobDescription);
+            submitData.append('userId', user.id);
+
+            if (formData.resume) {
+                submitData.append('resume', formData.resume);
             }
 
-            const response = await interviewAPI.create(interviewData)
-            console.log('Interview created:', response)
+            const response = await interviewAPI.create(submitData);
 
-            // redirect to interview page with the interview ID
-            navigate(`/interview/${response.interview._id}`)
+            if (response.success) {
+                navigate('/interview', {
+                    state: {
+                        interviewId: response.data.interviewId,  // ✅ Changed from response.interview.id
+                        company: response.data.company,
+                        role: response.data.role,
+                        type: response.data.type
+                    }
+                });
+            }
 
-        } catch (err) {
-            console.error('Error creating interview:', err)
-            setError('Failed to start interview. Please try again.')
+        } catch (error) {
+            console.error('Error creating interview:', error);
+            alert('Failed to create interview. Please try again.');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
-    if (!user) {
-        return <div>Loading...</div>
-    }
+    if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
             <div className="max-w-3xl mx-auto pt-10">
-                {/* Header */}
                 <div className="text-center mb-8">
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="text-purple-600 hover:text-purple-700 font-semibold mb-4 inline-flex items-center gap-2"
+                        className="text-blue-600 hover:text-blue-700 font-semibold mb-4"
                     >
                         ← Back to Dashboard
                     </button>
                     <h1 className="text-4xl font-bold text-gray-800 mb-3">
-                        Setup Your Mock Interview
+                        Mock Interview
                     </h1>
                     <p className="text-gray-600 text-lg">
-                        Tell us about the position you're preparing for
+                        Practice with AI-powered interview questions
                     </p>
                 </div>
 
-                {/* Form Card */}
-                <div className="bg-white rounded-2xl shadow-xl p-8">
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                            {error}
-                        </div>
-                    )}
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                            Select Company
+                        </h2>
+                        <select
+                            name="company"
+                            value={formData.company}
+                            onChange={handleChange}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            required
+                        >
+                            <option value="">Choose a company...</option>
+                            {companies.map(company => (
+                                <option key={company} value={company.toLowerCase()}>
+                                    {company}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Company Selection */}
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">
-                                Select Company <span className="text-red-500">*</span>
-                            </label>
-                            <select
-                                name="company"
-                                value={formData.company}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition text-gray-700"
-                            >
-                                <option value="">Choose a company...</option>
-                                {companies.map((company) => (
-                                    <option key={company} value={company}>
-                                        {company}
-                                    </option>
-                                ))}
-                            </select>
-                            <p className="mt-2 text-sm text-gray-500">
-                                Questions will be tailored to this company's interview style
-                            </p>
-                        </div>
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                            Target Role
+                        </h2>
+                        <input
+                            type="text"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            placeholder="e.g., Software Engineer, Data Scientist, Product Manager"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            required
+                        />
+                    </div>
 
-                        {/* Role Input */}
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-2">
-                                Job Role <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                name="role"
-                                value={formData.role}
-                                onChange={handleChange}
-                                required
-                                placeholder="e.g., Software Engineer, Data Scientist, Product Manager"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
-                            />
-                            <p className="mt-2 text-sm text-gray-500">
-                                Be specific - this helps generate relevant questions
-                            </p>
-                        </div>
-
-                        {/* Interview Type */}
-                        <div>
-                            <label className="block text-sm font-bold text-gray-700 mb-3">
-                                Interview Type <span className="text-red-500">*</span>
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {/* Technical */}
-                                <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'technical'
-                                    ? 'border-purple-600 bg-purple-50'
-                                    : 'border-gray-200 hover:border-purple-300'
-                                    }`}>
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                            Interview Type
+                        </h2>
+                        <div className="grid md:grid-cols-3 gap-4">
+                            {[
+                                { id: 'technical', name: 'Technical', icon: '💻', desc: 'Coding, system design, algorithms' },
+                                { id: 'behavioral', name: 'Behavioral', icon: '💬', desc: 'Leadership, teamwork, conflict' },
+                                { id: 'mixed', name: 'Mixed', icon: '🔀', desc: 'Both technical & behavioral' }
+                            ].map(type => (
+                                <label
+                                    key={type.id}
+                                    className={`p-6 rounded-xl border-2 cursor-pointer transition-all ${formData.type === type.id
+                                        ? 'border-blue-600 bg-blue-50'
+                                        : 'border-gray-200 hover:border-blue-300'
+                                        }`}
+                                >
                                     <input
                                         type="radio"
-                                        name="interviewType"
-                                        value="technical"
-                                        checked={formData.interviewType === 'technical'}
+                                        name="type"
+                                        value={type.id}
+                                        checked={formData.type === type.id}
                                         onChange={handleChange}
-                                        className="sr-only"
+                                        className="hidden"
                                     />
-                                    <div className="text-center">
-                                        <div className="text-3xl mb-2">💻</div>
-                                        <div className="font-bold text-gray-800">Technical</div>
-                                        <div className="text-xs text-gray-600 mt-1">Coding & algorithms</div>
-                                    </div>
+                                    <div className="text-4xl mb-3">{type.icon}</div>
+                                    <h3 className="font-bold text-lg mb-1">{type.name}</h3>
+                                    <p className="text-sm text-gray-600">{type.desc}</p>
                                 </label>
-
-                                {/* Behavioral */}
-                                <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'behavioral'
-                                    ? 'border-purple-600 bg-purple-50'
-                                    : 'border-gray-200 hover:border-purple-300'
-                                    }`}>
-                                    <input
-                                        type="radio"
-                                        name="interviewType"
-                                        value="behavioral"
-                                        checked={formData.interviewType === 'behavioral'}
-                                        onChange={handleChange}
-                                        className="sr-only"
-                                    />
-                                    <div className="text-center">
-                                        <div className="text-3xl mb-2">💬</div>
-                                        <div className="font-bold text-gray-800">Behavioral</div>
-                                        <div className="text-xs text-gray-600 mt-1">Past experiences</div>
-                                    </div>
-                                </label>
-
-                                {/* Mixed */}
-                                <label className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${formData.interviewType === 'mixed'
-                                    ? 'border-purple-600 bg-purple-50'
-                                    : 'border-gray-200 hover:border-purple-300'
-                                    }`}>
-                                    <input
-                                        type="radio"
-                                        name="interviewType"
-                                        value="mixed"
-                                        checked={formData.interviewType === 'mixed'}
-                                        onChange={handleChange}
-                                        className="sr-only"
-                                    />
-                                    <div className="text-center">
-                                        <div className="text-3xl mb-2">🎯</div>
-                                        <div className="font-bold text-gray-800">Mixed</div>
-                                        <div className="text-xs text-gray-600 mt-1">Both types</div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        {/* Info Box */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <div className="flex gap-3">
-                                <div className="text-2xl">ℹ️</div>
-                                <div>
-                                    <h4 className="font-bold text-blue-900 mb-1">What to expect</h4>
-                                    <ul className="text-sm text-blue-800 space-y-1">
-                                        <li>• 5-10 interview questions based on your selections</li>
-                                        <li>• AI-powered feedback on your answers</li>
-                                        <li>• Detailed performance scoring and tips</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="pt-4">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading ? 'Starting Interview...' : 'Start Interview 🚀'}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                {/* Tips Section */}
-                <div className="mt-8 bg-white rounded-xl p-6 shadow-md">
-                    <h3 className="font-bold text-gray-800 mb-4 text-lg">💡 Quick Tips</h3>
-                    <div className="grid sm:grid-cols-2 gap-4 text-sm text-gray-600">
-                        <div className="flex gap-2">
-                            <span>✓</span>
-                            <span>Find a quiet place with no distractions</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span>✓</span>
-                            <span>Speak clearly and take your time</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span>✓</span>
-                            <span>Use the STAR method for behavioral questions</span>
-                        </div>
-                        <div className="flex gap-2">
-                            <span>✓</span>
-                            <span>Think out loud during technical problems</span>
+                            ))}
                         </div>
                     </div>
-                </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                            Job Description (Optional)
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Paste the job description to get more relevant questions
+                        </p>
+                        <textarea
+                            name="jobDescription"
+                            value={formData.jobDescription}
+                            onChange={handleChange}
+                            placeholder="Paste the job description here..."
+                            rows="6"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        />
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                            Upload Resume (Optional)
+                        </h2>
+                        <p className="text-sm text-gray-600 mb-4">
+                            Upload your resume for personalized questions
+                        </p>
+                        <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center">
+                            <input
+                                type="file"
+                                accept=".pdf,.doc,.docx"
+                                onChange={handleFileChange}
+                                className="hidden"
+                                id="resume-upload"
+                            />
+                            <label htmlFor="resume-upload" className="cursor-pointer">
+                                <div className="text-5xl mb-3">📄</div>
+                                {formData.resume ? (
+                                    <div>
+                                        <p className="text-green-600 font-semibold mb-2">
+                                            ✓ {formData.resume.name}
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                            Click to change file
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p className="text-gray-700 font-semibold mb-2">
+                                            Click to upload resume
+                                        </p>
+                                        <p className="text-sm text-gray-600">
+                                            PDF, DOC, or DOCX (Max 5MB)
+                                        </p>
+                                    </div>
+                                )}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                        <div className="flex gap-4">
+                            <div>
+                                <h4 className="font-bold text-blue-900 mb-2">Interview Guidelines</h4>
+                                <ul className="text-sm text-blue-800 space-y-1">
+                                    <li>• You'll receive 5 interview questions</li>
+                                    <li>• Type your answers (3-5 minutes per question)</li>
+                                    <li>• AI will evaluate and provide detailed feedback</li>
+                                    <li>• Resume and JD help generate more relevant questions</li>
+                                    <li>• Take your time - quality matters more than speed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {loading ? (
+                            <div className="flex items-center justify-center gap-2">
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Generating Questions...
+                            </div>
+                        ) : (
+                            'Start Interview'
+                        )}
+                    </button>
+                </form>
             </div>
         </div>
-    )
+    );
 }
 
-export default InterviewSetup
+export default InterviewSetup;

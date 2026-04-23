@@ -30,9 +30,9 @@ app.get('/api/health', (req, res) => {
 
 const authRoutes = require('./routes/authRoutes')
 const userRoutes = require('./routes/userRoutes')
-const interviewRoutes = require('./routes/interviewRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const aptitudeRoutes = require('./routes/aptitudeRoutes')
+const interviewRoutes = require('./routes/interviewRoutes');
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)

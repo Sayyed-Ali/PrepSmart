@@ -5,14 +5,18 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import InterviewSetup from './pages/InterviewSetup'
+import Interview from './pages/Interview'
+import InterviewResult from './pages/InterviewResult'
 import Companies from './pages/Companies'
 import CompanyDetail from './pages/CompanyDetail'
 import AdminDashboard from './pages/Admin/AdminDashboard'
-import AptitudeSetup from './pages/AptitudeSetup'        // Add
-import AptitudeTest from './pages/AptitudeTest'          // Add
-import AptitudeResult from './pages/AptitudeResult'      // Add
-import AddCompany from './pages/Admin/AddCompany'           // Add
-import AddAptitudeQuestion from './pages/Admin/AddAptitudeQuestion'  // Add
+import AptitudeSetup from './pages/AptitudeSetup'
+import AptitudeTest from './pages/AptitudeTest'
+import AptitudeResult from './pages/AptitudeResult'
+import AddCompany from './pages/Admin/AddCompany'
+import AddAptitudeQuestion from './pages/Admin/AddAptitudeQuestion'
+import Progress from './pages/Progress'
+
 import './App.css'
 
 function ProtectedRoute({ children }) {
@@ -39,19 +43,25 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/interview-setup" element={<ProtectedRoute><InterviewSetup /></ProtectedRoute>} />
           <Route path="/companies" element={<ProtectedRoute><Companies /></ProtectedRoute>} />
           <Route path="/companies/:id" element={<ProtectedRoute><CompanyDetail /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
-          {/* Add aptitude routes */}
+          {/* Interview Routes */}
+          <Route path="/interview-setup" element={<ProtectedRoute><InterviewSetup /></ProtectedRoute>} />
+          <Route path="/interview" element={<ProtectedRoute><Interview /></ProtectedRoute>} />
+          <Route path="/interview-result" element={<ProtectedRoute><InterviewResult /></ProtectedRoute>} />
+
+          {/* Aptitude Routes */}
           <Route path="/aptitude-setup" element={<ProtectedRoute><AptitudeSetup /></ProtectedRoute>} />
           <Route path="/aptitude-test" element={<ProtectedRoute><AptitudeTest /></ProtectedRoute>} />
           <Route path="/aptitude-result" element={<ProtectedRoute><AptitudeResult /></ProtectedRoute>} />
 
+          {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/add-company" element={<AdminRoute><AddCompany /></AdminRoute>} />
           <Route path="/admin/add-aptitude-question" element={<AdminRoute><AddAptitudeQuestion /></AdminRoute>} />
+
+          <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

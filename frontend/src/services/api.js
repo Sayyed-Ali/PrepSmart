@@ -73,28 +73,46 @@ export const userAPI = {
     }
 }
 
-// interview functions
+// Interview API
 export const interviewAPI = {
-    create: async (interviewData) => {
-        const response = await api.post('/interviews', interviewData)
-        return response.data
+    // Create new interview session
+    create: async (formData) => {
+        const response = await api.post('/interviews/create', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;  // ✅ Return full response
     },
 
+    // Get interview by ID
+    getById: async (interviewId) => {
+        const response = await api.get(`/interviews/${interviewId}`);
+        return response.data;  // ✅ Return full response
+    },
+
+    // Submit answer for a question
+    submitAnswer: async (interviewId, questionId, answer, timeTaken) => {
+        const response = await api.put(`/interviews/${interviewId}/answer`, {
+            questionId,
+            answer,
+            timeTaken
+        });
+        return response.data;
+    },
+
+    // Submit complete interview
+    submit: async (interviewId) => {
+        const response = await api.post(`/interviews/${interviewId}/submit`);
+        return response.data;
+    },
+
+    // Get user's interviews
     getUserInterviews: async (userId) => {
-        const response = await api.get(`/interviews/user/${userId}`)
-        return response.data
-    },
-
-    getInterview: async (interviewId) => {
-        const response = await api.get(`/interviews/${interviewId}`)
-        return response.data
-    },
-
-    updateInterview: async (interviewId, updateData) => {
-        const response = await api.put(`/interviews/${interviewId}`, updateData)
-        return response.data
+        const response = await api.get(`/interviews/user/${userId}`);
+        return response.data;
     }
-}
+};
 
 // aptitude test functions
 export const aptitudeAPI = {

@@ -7,12 +7,12 @@ const DashboardSidebar = ({ onLogout }) => {
 
     // all menu items with icons
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: <span class="material-symbols-outlined">dashboard</span>, path: '/dashboard' },
-        { id: 'interview', label: 'Mock Interview', icon: <span class="material-symbols-outlined">frame_person_mic</span>, path: '/interview-setup' },
-        { id: 'companies', label: 'Companies', icon: <span class="material-symbols-outlined">corporate_fare</span>, path: '/companies' },
-        { id: 'aptitude', label: 'Aptitude Tests', icon: <span class="material-symbols-outlined">auto_stories</span>, path: '/aptitude-setup' },
-        { id: 'dsa', label: 'DSA Practice', icon: <span class="material-symbols-outlined">code_blocks</span>, path: '/dsa' },
-        { id: 'progress', label: 'Progress', icon: <span class="material-symbols-outlined">bar_chart_4_bars</span>, path: '/progress' },
+        { id: 'dashboard', label: 'Dashboard', icon: <span className="material-symbols-outlined">dashboard</span>, path: '/dashboard' },
+        { id: 'interview', label: 'Mock Interview', icon: <span className="material-symbols-outlined">frame_person_mic</span>, path: '/interview-setup' },
+        { id: 'companies', label: 'Companies', icon: <span className="material-symbols-outlined">corporate_fare</span>, path: '/companies' },
+        { id: 'aptitude', label: 'Aptitude Tests', icon: <span className="material-symbols-outlined">auto_stories</span>, path: '/aptitude-setup' },
+        { id: 'dsa', label: 'DSA Practice', icon: <span className="material-symbols-outlined">code_blocks</span>, path: '/dsa' },
+        { id: 'progress', label: 'Progress', icon: <span className="material-symbols-outlined">bar_chart_4_bars</span>, path: '/progress' },
         { id: 'settings', label: 'Settings', icon: <span className="material-symbols-outlined">settings</span>, path: '/settings' }
     ]
 
@@ -66,7 +66,7 @@ const DashboardSidebar = ({ onLogout }) => {
                     onClick={onLogout}
                     className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white mt-4"
                 >
-                    <span className="text-lg"><span class="material-symbols-outlined">logout</span></span>
+                    <span className="text-lg"><span className="material-symbols-outlined">logout</span></span>
                     <span>Logout</span>
                 </button>
             )}
