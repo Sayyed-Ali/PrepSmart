@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authAPI, interviewAPI } from '../services/api';
+import { authAPI, interviewAPI, dsaAPI } from '../services/api';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function Progress() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [interviews, setInterviews] = useState([]);
+    const [dsaStats, setDsaStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
 
@@ -21,28 +22,32 @@ function Progress() {
             setUser(currentUser);
             const userId = currentUser._id || currentUser.id;
 
-            console.log('🔍 Fetching interviews for user:', userId);
-
             try {
-                const response = await interviewAPI.getUserInterviews(userId);
-                console.log('🔍 Full API Response:', JSON.stringify(response, null, 2));
+                // Fetch both interview and DSA data
+                const [interviewResponse, dsaResponse] = await Promise.all([
+                    interviewAPI.getUserInterviews(userId),
+                    dsaAPI.getStats()
+                ]);
 
-                // Try different response structures
+                // Handle interview data
                 let interviewData = [];
-                if (Array.isArray(response)) {
-                    interviewData = response;
-                } else if (response.success && response.interviews) {
-                    interviewData = response.interviews;
-                } else if (response.interviews) {
-                    interviewData = response.interviews;
-                } else if (response.data) {
-                    interviewData = response.data;
+                if (Array.isArray(interviewResponse)) {
+                    interviewData = interviewResponse;
+                } else if (interviewResponse.success && interviewResponse.interviews) {
+                    interviewData = interviewResponse.interviews;
+                } else if (interviewResponse.interviews) {
+                    interviewData = interviewResponse.interviews;
+                } else if (interviewResponse.data) {
+                    interviewData = interviewResponse.data;
                 }
-                console.log('🔍 Interview data extracted:', interviewData);
                 setInterviews(interviewData);
+
+                // Handle DSA stats
+                setDsaStats(dsaResponse.stats || dsaResponse);
             } catch (error) {
-                console.error('Error fetching interviews:', error);
+                console.error('Error fetching progress data:', error);
                 setInterviews([]);
+                setDsaStats(null);
             } finally {
                 setLoading(false);
             }
@@ -64,30 +69,11 @@ function Progress() {
 
     if (!user) return null;
 
-    // ✅ SAFETY CHECK - Make sure interviews is an array
+    // ===== INTERVIEW ANALYTICS =====
     const safeInterviews = Array.isArray(interviews) ? interviews : [];
-
-    // ✅ DEBUG LOGS
-    console.log('🔍 PROGRESS PAGE DEBUG:');
-    console.log('All interviews:', safeInterviews);
-    console.log('Total count:', safeInterviews.length);
-
-    // ===== ANALYTICS CALCULATIONS =====
     const completedInterviews = safeInterviews.filter(i => i.status === 'completed');
     const inProgressInterviews = safeInterviews.filter(i => i.status === 'in-progress');
 
-    console.log('Completed interviews:', completedInterviews);
-    console.log('Completed count:', completedInterviews.length);
-    console.log('In-progress count:', inProgressInterviews.length);
-
-    // Check first completed interview
-    if (completedInterviews.length > 0) {
-        console.log('First completed interview:', completedInterviews[0]);
-        console.log('Has overallScore?', completedInterviews[0].overallScore);
-        console.log('Interview status:', completedInterviews[0].status);
-    }
-
-    // Score trend data
     const scoreTrendData = completedInterviews
         .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         .map((interview, index) => ({
@@ -96,9 +82,6 @@ function Progress() {
             date: new Date(interview.createdAt).toLocaleDateString()
         }));
 
-    console.log('Score trend data:', scoreTrendData);
-
-    // Company-wise performance
     const companyStats = {};
     completedInterviews.forEach(interview => {
         if (!companyStats[interview.company]) {
@@ -115,9 +98,6 @@ function Progress() {
         count: data.count
     })).sort((a, b) => b.avgScore - a.avgScore);
 
-    console.log('Company performance:', companyPerformance);
-
-    // Interview type breakdown
     const typeStats = {
         technical: completedInterviews.filter(i => i.type === 'technical').length,
         behavioral: completedInterviews.filter(i => i.type === 'behavioral').length,
@@ -130,20 +110,23 @@ function Progress() {
         { name: 'Mixed', value: typeStats.mixed, color: '#F59E0B' }
     ].filter(item => item.value > 0);
 
-    console.log('Type pie data:', typePieData);
-
-    // Overall stats
     const totalScore = completedInterviews.reduce((sum, i) => sum + (i.overallScore || 0), 0);
-    console.log('Total score sum:', totalScore);
-
     const averageScore = completedInterviews.length > 0 ? Math.round(totalScore / completedInterviews.length) : 0;
-    console.log('Average score calculated:', averageScore);
-
     const bestScore = completedInterviews.length > 0 ? Math.max(...completedInterviews.map(i => i.overallScore || 0)) : 0;
-    console.log('Best score:', bestScore);
 
-    const worstScore = completedInterviews.length > 0 ? Math.min(...completedInterviews.map(i => i.overallScore || 0)) : 0;
-    console.log('Worst score:', worstScore);
+    // ===== DSA ANALYTICS =====
+    const dsaDifficultyData = dsaStats ? [
+        { name: 'Easy', value: dsaStats.byDifficulty?.easy || 0, color: '#10B981' },
+        { name: 'Medium', value: dsaStats.byDifficulty?.medium || 0, color: '#F59E0B' },
+        { name: 'Hard', value: dsaStats.byDifficulty?.hard || 0, color: '#EF4444' }
+    ].filter(item => item.value > 0) : [];
+
+    const dsaCategoryData = dsaStats?.byCategory ?
+        Object.entries(dsaStats.byCategory)
+            .map(([category, count]) => ({ category, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5)
+        : [];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4">
@@ -161,42 +144,68 @@ function Progress() {
                         <h1 className="text-4xl font-bold text-gray-800">Your Progress</h1>
                         <p className="text-gray-600 mt-2">Track your performance and improvement over time</p>
                     </div>
-                    <button
-                        onClick={() => navigate('/interview-setup')}
-                        className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition shadow-lg"
-                    >
-                        + New Interview
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => navigate('/dsa')}
+                            className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-teal-700 transition shadow-lg"
+                        >
+                            💻 Practice DSA
+                        </button>
+                        <button
+                            onClick={() => navigate('/interview-setup')}
+                            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition shadow-lg"
+                        >
+                            🎤 New Interview
+                        </button>
+                    </div>
                 </div>
 
                 {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    {/* Interview Stats */}
                     <div className="bg-white rounded-xl shadow-lg p-6">
-                        <div className="text-sm text-gray-600 mb-1">Total Interviews</div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">🎤</span>
+                            <div className="text-sm text-gray-600">Interviews</div>
+                        </div>
                         <div className="text-3xl font-bold text-blue-600">{safeInterviews.length}</div>
                         <div className="text-xs text-gray-500 mt-1">
-                            {completedInterviews.length} completed, {inProgressInterviews.length} in progress
+                            {completedInterviews.length} completed
                         </div>
                     </div>
+
                     <div className="bg-white rounded-xl shadow-lg p-6">
-                        <div className="text-sm text-gray-600 mb-1">Average Score</div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">⭐</span>
+                            <div className="text-sm text-gray-600">Avg Score</div>
+                        </div>
                         <div className="text-3xl font-bold text-green-600">{averageScore}</div>
-                        <div className="text-xs text-gray-500 mt-1">Across all completed interviews</div>
+                        <div className="text-xs text-gray-500 mt-1">Interview performance</div>
                     </div>
+
+                    {/* DSA Stats */}
                     <div className="bg-white rounded-xl shadow-lg p-6">
-                        <div className="text-sm text-gray-600 mb-1">Best Score</div>
-                        <div className="text-3xl font-bold text-yellow-600">{bestScore}</div>
-                        <div className="text-xs text-gray-500 mt-1">Your highest achievement</div>
-                    </div>
-                    <div className="bg-white rounded-xl shadow-lg p-6">
-                        <div className="text-sm text-gray-600 mb-1">Improvement</div>
-                        <div className="text-3xl font-bold text-purple-600">
-                            {scoreTrendData.length >= 2
-                                ? (scoreTrendData[scoreTrendData.length - 1].score - scoreTrendData[0].score > 0 ? '+' : '')
-                                + (scoreTrendData[scoreTrendData.length - 1].score - scoreTrendData[0].score)
-                                : 'N/A'}
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">💻</span>
+                            <div className="text-sm text-gray-600">DSA Solved</div>
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">Since first interview</div>
+                        <div className="text-3xl font-bold text-purple-600">
+                            {dsaStats?.totalSolved || 0}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">
+                            {dsaStats?.byDifficulty?.easy || 0}E • {dsaStats?.byDifficulty?.medium || 0}M • {dsaStats?.byDifficulty?.hard || 0}H
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">⭐</span>
+                            <div className="text-sm text-gray-600">Favorites</div>
+                        </div>
+                        <div className="text-3xl font-bold text-yellow-600">
+                            {dsaStats?.totalFavorites || 0}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">Bookmarked problems</div>
                     </div>
                 </div>
 
@@ -213,13 +222,19 @@ function Progress() {
                             onClick={() => setActiveTab('interviews')}
                             className={`flex-1 py-3 px-6 rounded-lg font-semibold transition ${activeTab === 'interviews' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                         >
-                            🎤 All Interviews
+                            🎤 Interviews
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('dsa')}
+                            className={`flex-1 py-3 px-6 rounded-lg font-semibold transition ${activeTab === 'dsa' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
+                        >
+                            💻 DSA Practice
                         </button>
                         <button
                             onClick={() => setActiveTab('companies')}
                             className={`flex-1 py-3 px-6 rounded-lg font-semibold transition ${activeTab === 'companies' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                         >
-                            🏢 By Company
+                            🏢 Companies
                         </button>
                     </div>
                 </div>
@@ -227,34 +242,63 @@ function Progress() {
                 {/* Tab Content */}
                 {activeTab === 'overview' && (
                     <div className="space-y-6">
-
-                        {/* Score Trend Chart */}
-                        {scoreTrendData.length > 0 ? (
-                            <div className="bg-white rounded-xl shadow-lg p-6">
-                                <h3 className="text-xl font-bold text-gray-800 mb-4">Score Trend</h3>
-                                <ResponsiveContainer width="100%" height={300}>
-                                    <LineChart data={scoreTrendData}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="name" />
-                                        <YAxis domain={[0, 100]} />
-                                        <Tooltip />
-                                        <Legend />
-                                        <Line type="monotone" dataKey="score" stroke="#3B82F6" strokeWidth={2} name="Score" />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                        ) : (
-                            <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                <div className="text-6xl mb-4">📈</div>
-                                <h3 className="text-xl font-bold text-gray-800 mb-2">No Data Yet</h3>
-                                <p className="text-gray-600">Complete interviews to see your progress chart</p>
-                            </div>
-                        )}
-
-                        {/* Charts Row */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Interview Score Trend */}
+                            {scoreTrendData.length > 0 ? (
+                                <div className="bg-white rounded-xl shadow-lg p-6">
+                                    <h3 className="text-xl font-bold text-gray-800 mb-4">Interview Score Trend</h3>
+                                    <ResponsiveContainer width="100%" height={250}>
+                                        <LineChart data={scoreTrendData}>
+                                            <CartesianGrid strokeDasharray="3 3" />
+                                            <XAxis dataKey="name" />
+                                            <YAxis domain={[0, 100]} />
+                                            <Tooltip />
+                                            <Line type="monotone" dataKey="score" stroke="#3B82F6" strokeWidth={2} name="Score" />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            ) : (
+                                <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+                                    <div className="text-6xl mb-4">🎤</div>
+                                    <h3 className="text-xl font-bold text-gray-800 mb-2">No Interview Data</h3>
+                                    <p className="text-gray-600">Complete interviews to see your progress</p>
+                                </div>
+                            )}
 
-                            {/* Interview Type Breakdown */}
+                            {/* DSA by Difficulty */}
+                            {dsaDifficultyData.length > 0 ? (
+                                <div className="bg-white rounded-xl shadow-lg p-6">
+                                    <h3 className="text-xl font-bold text-gray-800 mb-4">DSA by Difficulty</h3>
+                                    <ResponsiveContainer width="100%" height={250}>
+                                        <PieChart>
+                                            <Pie data={dsaDifficultyData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                                                {dsaDifficultyData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip />
+                                            <Legend />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            ) : (
+                                <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+                                    <div className="text-6xl mb-4">💻</div>
+                                    <h3 className="text-xl font-bold text-gray-800 mb-2">No DSA Progress</h3>
+                                    <p className="text-gray-600 mb-4">Start solving problems!</p>
+                                    <button
+                                        onClick={() => navigate('/dsa')}
+                                        className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                                    >
+                                        Practice Now
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Second Row */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Interview Types */}
                             {typePieData.length > 0 ? (
                                 <div className="bg-white rounded-xl shadow-lg p-6">
                                     <h3 className="text-xl font-bold text-gray-800 mb-4">Interview Types</h3>
@@ -277,24 +321,24 @@ function Progress() {
                                 </div>
                             )}
 
-                            {/* Top Companies */}
-                            {companyPerformance.length > 0 ? (
+                            {/* DSA by Category */}
+                            {dsaCategoryData.length > 0 ? (
                                 <div className="bg-white rounded-xl shadow-lg p-6">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-4">Top Companies</h3>
+                                    <h3 className="text-xl font-bold text-gray-800 mb-4">Top DSA Categories</h3>
                                     <ResponsiveContainer width="100%" height={250}>
-                                        <BarChart data={companyPerformance.slice(0, 5)}>
+                                        <BarChart data={dsaCategoryData}>
                                             <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="company" />
-                                            <YAxis domain={[0, 100]} />
+                                            <XAxis dataKey="category" angle={-45} textAnchor="end" height={80} />
+                                            <YAxis />
                                             <Tooltip />
-                                            <Bar dataKey="avgScore" fill="#10B981" name="Avg Score" />
+                                            <Bar dataKey="count" fill="#8B5CF6" name="Solved" />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>
                             ) : (
                                 <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                    <div className="text-6xl mb-4">🏢</div>
-                                    <p className="text-gray-600">No company data yet</p>
+                                    <div className="text-6xl mb-4">📈</div>
+                                    <p className="text-gray-600">No category data yet</p>
                                 </div>
                             )}
                         </div>
@@ -360,6 +404,71 @@ function Progress() {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === 'dsa' && (
+                    <div className="bg-white rounded-xl shadow-lg p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-bold text-gray-800">DSA Practice Progress</h3>
+                            <button
+                                onClick={() => navigate('/dsa')}
+                                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                            >
+                                Practice Now
+                            </button>
+                        </div>
+
+                        {!dsaStats || dsaStats.totalSolved === 0 ? (
+                            <div className="text-center py-12">
+                                <div className="text-6xl mb-4">💻</div>
+                                <p className="text-gray-600 text-lg mb-4">No DSA problems solved yet</p>
+                                <button
+                                    onClick={() => navigate('/dsa')}
+                                    className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                                >
+                                    Start Practicing
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="space-y-6">
+                                {/* Difficulty Breakdown */}
+                                <div>
+                                    <h4 className="text-lg font-semibold text-gray-800 mb-4">By Difficulty</h4>
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <div className="border border-green-200 bg-green-50 rounded-lg p-4">
+                                            <div className="text-sm text-green-700 mb-1">Easy</div>
+                                            <div className="text-3xl font-bold text-green-600">{dsaStats.byDifficulty?.easy || 0}</div>
+                                        </div>
+                                        <div className="border border-yellow-200 bg-yellow-50 rounded-lg p-4">
+                                            <div className="text-sm text-yellow-700 mb-1">Medium</div>
+                                            <div className="text-3xl font-bold text-yellow-600">{dsaStats.byDifficulty?.medium || 0}</div>
+                                        </div>
+                                        <div className="border border-red-200 bg-red-50 rounded-lg p-4">
+                                            <div className="text-sm text-red-700 mb-1">Hard</div>
+                                            <div className="text-3xl font-bold text-red-600">{dsaStats.byDifficulty?.hard || 0}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Category Breakdown */}
+                                {dsaCategoryData.length > 0 && (
+                                    <div>
+                                        <h4 className="text-lg font-semibold text-gray-800 mb-4">By Category</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {Object.entries(dsaStats.byCategory || {}).map(([category, count]) => (
+                                                <div key={category} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-gray-700 font-medium">{category}</span>
+                                                        <span className="text-2xl font-bold text-purple-600">{count}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

@@ -16,6 +16,8 @@ import AptitudeResult from './pages/AptitudeResult'
 import AddCompany from './pages/Admin/AddCompany'
 import AddAptitudeQuestion from './pages/Admin/AddAptitudeQuestion'
 import Progress from './pages/Progress'
+import DSAPractice from './pages/DSAPractice';
+import DSAProblemDetail from './pages/DSAProblemDetail';
 
 import './App.css'
 
@@ -61,7 +63,13 @@ function App() {
           <Route path="/admin/add-company" element={<AdminRoute><AddCompany /></AdminRoute>} />
           <Route path="/admin/add-aptitude-question" element={<AdminRoute><AddAptitudeQuestion /></AdminRoute>} />
 
+          {/* Progress Routes */}
           <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
+
+          {/* DSA Routes */}
+          <Route path="/dsa" element={<ProtectedRoute><DSAPractice /></ProtectedRoute>} />
+          <Route path="/dsa/:id" element={<ProtectedRoute><DSAProblemDetail /></ProtectedRoute>} />
+
         </Routes>
       </div>
     </Router>

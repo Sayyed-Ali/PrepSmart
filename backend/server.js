@@ -33,12 +33,14 @@ const userRoutes = require('./routes/userRoutes')
 const adminRoutes = require('./routes/adminRoutes')
 const aptitudeRoutes = require('./routes/aptitudeRoutes')
 const interviewRoutes = require('./routes/interviewRoutes');
+const dsaRoutes = require('./routes/dsaRoutes');
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/interviews', interviewRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/aptitude', aptitudeRoutes)
+app.use('/api/dsa', dsaRoutes);
 
 app.use((err, req, res, next) => {
     console.error('Error:', err.message)

@@ -142,4 +142,43 @@ export const aptitudeAPI = {
     }
 }
 
+export const dsaAPI = {
+    getProblems: async (filters = {}) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const params = new URLSearchParams({ ...filters, userId });
+        const response = await api.get(`/dsa/problems?${params}`);  // ✅ Changed from /api/dsa/problems
+        return response.data;
+    },
+
+    getProblem: async (id) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.get(`/dsa/problems/${id}?userId=${userId}`);  // ✅ Changed
+        return response.data;
+    },
+
+    toggleComplete: async (id) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.post(`/dsa/problems/${id}/toggle-complete`, { userId });  // ✅ Changed
+        return response.data;
+    },
+
+    toggleFavorite: async (id) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.post(`/dsa/problems/${id}/toggle-favorite`, { userId });  // ✅ Changed
+        return response.data;
+    },
+
+    getStats: async () => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.get(`/dsa/stats?userId=${userId}`);  // ✅ Changed
+        return response.data;
+    }
+};
+
+
 export default api
