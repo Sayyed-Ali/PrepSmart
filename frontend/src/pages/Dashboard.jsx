@@ -7,7 +7,6 @@ import WelcomeCard from '../components/WelcomeCard'
 import RecentInterviews from '../components/RecentInterviews'
 import CalendarWidget from '../components/CalendarWidget'
 import ProgressChart from '../components/ProgressChart'
-import { color } from 'chart.js/helpers'
 
 function Dashboard() {
     const navigate = useNavigate()
@@ -24,15 +23,34 @@ function Dashboard() {
                 return
             }
 
+            console.log('Current user object:', currentUser); // ✅ DEBUG - see what's in the user object
+
             setUser(currentUser)
+
+            // ✅ FIXED - Try both _id and id
+            const userId = currentUser._id || currentUser.id;
+
+            if (!userId) {
+                console.error('User ID not found in user object:', currentUser);
+                setLoading(false);
+                return;
+            }
 
             // fetch user's interviews
             try {
-                const response = await interviewAPI.getUserInterviews(currentUser.id)
-                console.log('User interviews:', response)
-                setInterviews(response.interviews || [])
+                console.log('Fetching interviews for user:', userId);
+                const response = await interviewAPI.getUserInterviews(userId);
+                console.log('API Response:', response);
+
+                if (response.success && response.interviews) {
+                    setInterviews(response.interviews);
+                } else if (response.data) {
+                    setInterviews(response.data);
+                } else {
+                    setInterviews([]);
+                }
             } catch (error) {
-                console.error('Error fetching interviews:', error)
+                console.error('Error fetching interviews:', error);
                 setInterviews([])
             } finally {
                 setLoading(false)
@@ -63,13 +81,13 @@ function Dashboard() {
     }
 
     // calculate stats from actual data
+    const completedInterviews = interviews.filter(i => i.status === 'completed');
     const stats = {
-        interviewsCompleted: interviews.filter(i => i.status === 'completed').length,
+        interviewsCompleted: completedInterviews.length,
         totalInterviews: interviews.length,
-        averageScore: interviews.length > 0
-            ? (interviews.reduce((sum, i) => sum + (i.feedback?.overallScore || 0), 0) / interviews.length).toFixed(1)
+        averageScore: completedInterviews.length > 0
+            ? (completedInterviews.reduce((sum, i) => sum + (i.overallScore || 0), 0) / completedInterviews.length).toFixed(1)
             : 0,
-        // for time spent, we'll use user.stats if available
         timeSpent: user.stats?.timeSpent || 0
     }
 
@@ -100,7 +118,11 @@ function Dashboard() {
 
                             {/* NOTIFICATION */}
                             <button className="relative w-11 h-11 bg-white rounded-xl flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200">
-                                <span className="text-lg"><span className="material-symbols-outlined" style={{ color: '#F19E39' }}>notifications_unread</span></span>
+                                <span className="text-lg">
+                                    <span className="material-symbols-outlined" style={{ color: '#F19E39' }}>
+                                        notifications_unread
+                                    </span>
+                                </span>
                                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-white text-xs flex items-center justify-center font-semibold">
                                     0
                                 </span>
