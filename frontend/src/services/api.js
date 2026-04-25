@@ -75,23 +75,20 @@ export const userAPI = {
 
 // Interview API
 export const interviewAPI = {
-    // Create new interview session
     create: async (formData) => {
         const response = await api.post('/interviews/create', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
         });
-        return response.data;  // ✅ Return full response
+        return response.data;
     },
 
-    // Get interview by ID
     getById: async (interviewId) => {
         const response = await api.get(`/interviews/${interviewId}`);
-        return response.data;  // ✅ Return full response
+        return response.data;
     },
 
-    // Submit answer for a question
     submitAnswer: async (interviewId, questionId, answer, timeTaken) => {
         const response = await api.put(`/interviews/${interviewId}/answer`, {
             questionId,
@@ -101,13 +98,11 @@ export const interviewAPI = {
         return response.data;
     },
 
-    // Submit complete interview
     submit: async (interviewId) => {
         const response = await api.post(`/interviews/${interviewId}/submit`);
         return response.data;
     },
 
-    // Get user's interviews
     getUserInterviews: async (userId) => {
         const response = await api.get(`/interviews/user/${userId}`);
         return response.data;
@@ -142,43 +137,160 @@ export const aptitudeAPI = {
     }
 }
 
+// DSA API
 export const dsaAPI = {
     getProblems: async (filters = {}) => {
         const user = authAPI.getCurrentUser();
         const userId = user?._id || user?.id;
         const params = new URLSearchParams({ ...filters, userId });
-        const response = await api.get(`/dsa/problems?${params}`);  // ✅ Changed from /api/dsa/problems
+        const response = await api.get(`/dsa/problems?${params}`);
         return response.data;
     },
 
     getProblem: async (id) => {
         const user = authAPI.getCurrentUser();
         const userId = user?._id || user?.id;
-        const response = await api.get(`/dsa/problems/${id}?userId=${userId}`);  // ✅ Changed
+        const response = await api.get(`/dsa/problems/${id}?userId=${userId}`);
         return response.data;
     },
 
     toggleComplete: async (id) => {
         const user = authAPI.getCurrentUser();
         const userId = user?._id || user?.id;
-        const response = await api.post(`/dsa/problems/${id}/toggle-complete`, { userId });  // ✅ Changed
+        const response = await api.post(`/dsa/problems/${id}/toggle-complete`, { userId });
         return response.data;
     },
 
     toggleFavorite: async (id) => {
         const user = authAPI.getCurrentUser();
         const userId = user?._id || user?.id;
-        const response = await api.post(`/dsa/problems/${id}/toggle-favorite`, { userId });  // ✅ Changed
+        const response = await api.post(`/dsa/problems/${id}/toggle-favorite`, { userId });
         return response.data;
     },
 
     getStats: async () => {
         const user = authAPI.getCurrentUser();
         const userId = user?._id || user?.id;
-        const response = await api.get(`/dsa/stats?userId=${userId}`);  // ✅ Changed
+        const response = await api.get(`/dsa/stats?userId=${userId}`);
         return response.data;
     }
 };
 
+// Vacancy API
+export const vacancyAPI = {
+    getVacancies: async (filters = {}) => {
+        const params = new URLSearchParams(filters);
+        const response = await api.get(`/vacancies?${params}`);
+        return response.data;
+    },
+
+    getVacancy: async (id) => {
+        const response = await api.get(`/vacancies/${id}`);
+        return response.data;
+    },
+
+    createVacancy: async (data) => {
+        const response = await api.post('/vacancies', data);
+        return response.data;
+    },
+
+    updateVacancy: async (id, data) => {
+        const response = await api.put(`/vacancies/${id}`, data);
+        return response.data;
+    },
+
+    deleteVacancy: async (id) => {
+        const response = await api.delete(`/vacancies/${id}`);
+        return response.data;
+    },
+
+    getStats: async () => {
+        const response = await api.get('/stats/vacancies');
+        return response.data;
+    }
+};
+
+// ✅ ADD THIS - Admin API
+export const adminAPI = {
+    // Company management
+    addCompany: async (companyData) => {
+        const response = await api.post('/admin/companies', companyData);
+        return response.data;
+    },
+
+    updateCompany: async (companyId, companyData) => {
+        const response = await api.put(`/admin/companies/${companyId}`, companyData);
+        return response.data;
+    },
+
+    deleteCompany: async (companyId) => {
+        const response = await api.delete(`/admin/companies/${companyId}`);
+        return response.data;
+    },
+
+    // Aptitude question management
+    addAptitudeQuestion: async (questionData) => {
+        const response = await api.post('/admin/aptitude/questions', questionData);
+        return response.data;
+    },
+
+    getAptitudeQuestions: async () => {
+        const response = await api.get('/admin/aptitude/questions');
+        return response.data;
+    },
+
+    deleteAptitudeQuestion: async (questionId) => {
+        const response = await api.delete(`/admin/aptitude/questions/${questionId}`);
+        return response.data;
+    },
+
+    // DSA problem management
+    createDSAProblem: async (data) => {
+        const response = await api.post('/admin/dsa-problems', data);
+        return response.data;
+    },
+
+    getAllDSAProblems: async () => {
+        const response = await api.get('/admin/dsa-problems');
+        return response.data;
+    },
+
+    deleteDSAProblem: async (id) => {
+        const response = await api.delete(`/admin/dsa-problems/${id}`);
+        return response.data;
+    },
+
+    // Stats
+    getStats: async () => {
+        const response = await api.get('/admin/stats');
+        return response.data;
+    }
+};
+
+export const practiceAPI = {
+    // Log practice activity (call this when user completes DSA/Interview/Aptitude)
+    logActivity: async (type, count = 1) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.post('/practice/log', { userId, type, count });
+        return response.data;
+    },
+
+    // Get practice calendar for user
+    getCalendar: async (days = 90) => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.get(`/practice/calendar/${userId}?days=${days}`);
+        return response.data;
+    },
+
+    // Get practice stats (streaks, totals)
+    getStats: async () => {
+        const user = authAPI.getCurrentUser();
+        const userId = user?._id || user?.id;
+        const response = await api.get(`/practice/stats/${userId}`);
+        return response.data;
+    }
+};
 
 export default api
