@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Company = require('../models/Company')
 const User = require('../models/User')
+const DSAProblem = require('../models/DSAProblem');
 
 // middleware to check if user is admin
 const isAdmin = async (req, res, next) => {
@@ -320,5 +321,69 @@ router.delete('/aptitude/questions/:id', async (req, res) => {
     }
 })
 
+
+// Create DSA Problem (admin only)
+router.post('/dsa-problems', async (req, res) => {
+    try {
+        const problem = await DSAProblem.create(req.body);
+
+        res.status(201).json({
+            success: true,
+            message: 'DSA problem created successfully',
+            problem
+        });
+    } catch (error) {
+        console.error('Error creating DSA problem:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to create DSA problem',
+            error: error.message
+        });
+    }
+});
+
+// Get all DSA problems for admin
+router.get('/dsa-problems', async (req, res) => {
+    try {
+        const problems = await DSAProblem.find({}).sort({ createdAt: -1 });
+
+        res.json({
+            success: true,
+            count: problems.length,
+            problems
+        });
+    } catch (error) {
+        console.error('Error fetching DSA problems:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch DSA problems'
+        });
+    }
+});
+
+// Delete DSA problem
+router.delete('/dsa-problems/:id', async (req, res) => {
+    try {
+        const problem = await DSAProblem.findByIdAndDelete(req.params.id);
+
+        if (!problem) {
+            return res.status(404).json({
+                success: false,
+                message: 'Problem not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Problem deleted successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting DSA problem:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to delete problem'
+        });
+    }
+});
 
 module.exports = router

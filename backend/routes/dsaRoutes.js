@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const DSAProblem = require('../models/DSAProblem');
 const UserDSAProgress = require('../models/UserDSAProgress');
+const PracticeActivity = require('../models/PracticeActivity');
 
 // Get all DSA problems (with user progress if authenticated)
 router.get('/problems', async (req, res) => {
@@ -90,7 +91,7 @@ router.get('/problems/:id', async (req, res) => {
     }
 });
 
-// Toggle completion status
+// Update the toggle-complete route to log practice:
 router.post('/problems/:id/toggle-complete', async (req, res) => {
     try {
         const userId = req.body.userId;
@@ -118,6 +119,34 @@ router.post('/problems/:id/toggle-complete', async (req, res) => {
                 isCompleted: true,
                 completedAt: new Date()
             });
+        }
+
+        // ✅ AUTO-LOG PRACTICE ACTIVITY (NEW CODE)
+        if (progress.isCompleted) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let activity = await PracticeActivity.findOne({
+                user: userId,
+                date: today
+            });
+
+            if (!activity) {
+                activity = new PracticeActivity({
+                    user: userId,
+                    date: today,
+                    activities: {
+                        dsa: { practiced: true, problemsSolved: 1 },
+                        interview: { practiced: false, sessionsCompleted: 0 },
+                        aptitude: { practiced: false, testsCompleted: 0 }
+                    }
+                });
+            } else {
+                activity.activities.dsa.practiced = true;
+                activity.activities.dsa.problemsSolved += 1;
+            }
+
+            await activity.save();
         }
 
         res.json({

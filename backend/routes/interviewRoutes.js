@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const { extractResumeText } = require('../utils/resumeParser');
 const { generateInterviewQuestions, evaluateInterviewAnswer } = require('../services/aiService');
+const PracticeActivity = require('../models/PracticeActivity');
 
 // Configure multer for resume upload
 const storage = multer.diskStorage({
