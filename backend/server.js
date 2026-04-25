@@ -34,6 +34,8 @@ const adminRoutes = require('./routes/adminRoutes')
 const aptitudeRoutes = require('./routes/aptitudeRoutes')
 const interviewRoutes = require('./routes/interviewRoutes');
 const dsaRoutes = require('./routes/dsaRoutes');
+const vacancyRoutes = require('./routes/vacancyRoutes');
+const practiceRoutes = require('./routes/practiceRoutes');
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
@@ -41,6 +43,8 @@ app.use('/api/interviews', interviewRoutes)
 app.use('/api/admin', adminRoutes)
 app.use('/api/aptitude', aptitudeRoutes)
 app.use('/api/dsa', dsaRoutes);
+app.use('/api', vacancyRoutes);
+app.use('/api/practice', practiceRoutes);
 
 app.use((err, req, res, next) => {
     console.error('Error:', err.message)
