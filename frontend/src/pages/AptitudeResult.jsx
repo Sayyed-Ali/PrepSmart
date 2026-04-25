@@ -90,8 +90,8 @@ function AptitudeResult() {
                             <div
                                 key={index}
                                 className={`p-4 rounded-xl border-2 ${answer.isCorrect
-                                        ? 'border-green-200 bg-green-50'
-                                        : 'border-red-200 bg-red-50'
+                                    ? 'border-green-200 bg-green-50'
+                                    : 'border-red-200 bg-red-50'
                                     }`}
                             >
                                 <div className="flex items-start gap-3 mb-3">

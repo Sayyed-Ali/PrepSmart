@@ -10,7 +10,6 @@ function AdminDashboard() {
     useEffect(() => {
         const currentUser = authAPI.getCurrentUser()
 
-        // check if user is admin
         if (!currentUser) {
             navigate('/login')
             return
@@ -30,10 +29,12 @@ function AdminDashboard() {
     }
 
     const tabs = [
-        { id: 'overview', label: 'Overview', icon: '' },
-        { id: 'companies', label: 'Manage Companies', icon: '' },
-        { id: 'users', label: 'Manage Users', icon: '' },
-        { id: 'questions', label: 'Questions Bank', icon: '' }
+        { id: 'overview', label: 'Overview', icon: '📊' },
+        { id: 'companies', label: 'Manage Companies', icon: '🏢' },
+        { id: 'users', label: 'Manage Users', icon: '👥' },
+        { id: 'questions', label: 'Questions Bank', icon: '📝' },
+        { id: 'dsa', label: 'DSA Problems', icon: '💻' },
+        { id: 'vacancies', label: 'Job Vacancies', icon: '💼' }
     ]
 
     return (
@@ -65,8 +66,8 @@ function AdminDashboard() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-4 font-semibold transition border-b-2 whitespace-nowrap ${activeTab === tab.id
-                                    ? 'border-red-600 text-red-600'
-                                    : 'border-transparent text-gray-600 hover:text-gray-800'
+                                        ? 'border-red-600 text-red-600'
+                                        : 'border-transparent text-gray-600 hover:text-gray-800'
                                     }`}
                             >
                                 <span className="mr-2">{tab.icon}</span>
@@ -83,6 +84,8 @@ function AdminDashboard() {
                 {activeTab === 'companies' && <CompaniesTab />}
                 {activeTab === 'users' && <UsersTab />}
                 {activeTab === 'questions' && <QuestionsTab />}
+                {activeTab === 'dsa' && <DSATab />}
+                {activeTab === 'vacancies' && <VacanciesTab />}
             </div>
         </div>
     )
@@ -98,8 +101,6 @@ function OverviewTab() {
     })
 
     useEffect(() => {
-        // fetch stats from API
-        // for now using dummy data
         setStats({
             totalUsers: 25,
             totalCompanies: 5,
@@ -114,25 +115,25 @@ function OverviewTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-600">
-                    <div className="text-3xl mb-2"></div>
+                    <div className="text-3xl mb-2">👥</div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalUsers}</div>
                     <div className="text-gray-600">Total Users</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-600">
-                    <div className="text-3xl mb-2"></div>
+                    <div className="text-3xl mb-2">🏢</div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalCompanies}</div>
                     <div className="text-gray-600">Companies</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-600">
-                    <div className="text-3xl mb-2"></div>
+                    <div className="text-3xl mb-2">🎤</div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalInterviews}</div>
                     <div className="text-gray-600">Interviews</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-600">
-                    <div className="text-3xl mb-2"></div>
+                    <div className="text-3xl mb-2">🔥</div>
                     <div className="text-3xl font-bold text-gray-800">{stats.activeToday}</div>
                     <div className="text-gray-600">Active Today</div>
                 </div>
@@ -142,19 +143,19 @@ function OverviewTab() {
                 <h3 className="text-xl font-bold mb-4">Quick Actions</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2"></div>
+                        <div className="text-2xl mb-2">🏢</div>
                         <div className="font-semibold">Add Company</div>
                         <div className="text-sm text-gray-600">Add new company data</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2"></div>
+                        <div className="text-2xl mb-2">📤</div>
                         <div className="font-semibold">Bulk Upload</div>
                         <div className="text-sm text-gray-600">Import companies via JSON</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2"></div>
+                        <div className="text-2xl mb-2">📊</div>
                         <div className="font-semibold">View Reports</div>
                         <div className="text-sm text-gray-600">Platform analytics</div>
                     </button>
@@ -164,9 +165,7 @@ function OverviewTab() {
     )
 }
 
-// Companies Tab Component
-// Replace the CompaniesTab function with this:
-
+// Companies Tab
 function CompaniesTab() {
     const navigate = useNavigate()
 
@@ -212,7 +211,7 @@ function CompaniesTab() {
     )
 }
 
-
+// Questions Tab
 function QuestionsTab() {
     const navigate = useNavigate()
 
@@ -244,16 +243,13 @@ function QuestionsTab() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">💻</div>
-                    <h3 className="font-bold text-lg mb-2">DSA Questions</h3>
+                    <div className="text-3xl mb-3">📚</div>
+                    <h3 className="font-bold text-lg mb-2">Question Bank</h3>
                     <p className="text-sm text-gray-600 mb-4">
-                        Add coding problems and algorithms
+                        View and manage all aptitude questions
                     </p>
-                    <button
-                        className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed"
-                        disabled
-                    >
-                        Coming Soon
+                    <button className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>
+                        View All Questions
                     </button>
                 </div>
             </div>
@@ -261,7 +257,99 @@ function QuestionsTab() {
     )
 }
 
-// Users Tab Component
+// DSA Tab (NEW)
+function DSATab() {
+    const navigate = useNavigate()
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Manage DSA Problems</h2>
+                <button
+                    onClick={() => navigate('/admin/add-dsa-question')}
+                    className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                >
+                    + Add DSA Problem
+                </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">💻</div>
+                    <h3 className="font-bold text-lg mb-2">Add DSA Problem</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Add coding problems with multiple solution approaches
+                    </p>
+                    <button
+                        onClick={() => navigate('/admin/add-dsa-question')}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                        Add Problem
+                    </button>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">📊</div>
+                    <h3 className="font-bold text-lg mb-2">Problem Statistics</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        View stats on DSA problems and user progress
+                    </p>
+                    <button className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>
+                        View Statistics
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Vacancies Tab (NEW)
+function VacanciesTab() {
+    const navigate = useNavigate()
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Manage Job Vacancies</h2>
+                <button
+                    onClick={() => navigate('/admin/add-vacancy')}
+                    className="bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                >
+                    + Add Vacancy
+                </button>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">💼</div>
+                    <h3 className="font-bold text-lg mb-2">Post New Vacancy</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        Add new job postings for students
+                    </p>
+                    <button
+                        onClick={() => navigate('/admin/add-vacancy')}
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
+                    >
+                        Add Vacancy
+                    </button>
+                </div>
+
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                    <div className="text-3xl mb-3">📋</div>
+                    <h3 className="font-bold text-lg mb-2">Active Vacancies</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                        View and manage all job postings
+                    </p>
+                    <button className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg font-semibold cursor-not-allowed" disabled>
+                        View All Vacancies
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Users Tab
 function UsersTab() {
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -294,7 +382,7 @@ function UsersTab() {
 
             if (response.ok) {
                 alert('User role updated!')
-                fetchUsers() // refresh list
+                fetchUsers()
             }
         } catch (error) {
             console.error('Error updating role:', error)
@@ -327,9 +415,7 @@ function UsersTab() {
                                 <td className="px-6 py-4 text-sm font-medium text-gray-800">{user.name}</td>
                                 <td className="px-6 py-4 text-sm text-gray-600">{user.email}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.role === 'admin'
-                                        ? 'bg-red-100 text-red-700'
-                                        : 'bg-blue-100 text-blue-700'
+                                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${user.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
                                         }`}>
                                         {user.role}
                                     </span>
