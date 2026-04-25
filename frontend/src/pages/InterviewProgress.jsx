@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { interviewAPI } from '../services/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import MainLayout from '../components/MainLayout'
 
 function InterviewProgress({ userId }) {
     const [interviews, setInterviews] = useState([]);
@@ -74,103 +75,105 @@ function InterviewProgress({ userId }) {
     }));
 
     return (
-        <div className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4">
-                    <div className="text-sm opacity-90">Total Interviews</div>
-                    <div className="text-3xl font-bold mt-1">{stats.total}</div>
+        <MainLayout>
+            <div className="space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4">
+                        <div className="text-sm opacity-90">Total Interviews</div>
+                        <div className="text-3xl font-bold mt-1">{stats.total}</div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-4">
+                        <div className="text-sm opacity-90">Completed</div>
+                        <div className="text-3xl font-bold mt-1">{stats.completed}</div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-4">
+                        <div className="text-sm opacity-90">Average Score</div>
+                        <div className="text-3xl font-bold mt-1">{stats.avgScore}</div>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-4">
+                        <div className="text-sm opacity-90">Best Score</div>
+                        <div className="text-3xl font-bold mt-1">{stats.bestScore}</div>
+                    </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-4">
-                    <div className="text-sm opacity-90">Completed</div>
-                    <div className="text-3xl font-bold mt-1">{stats.completed}</div>
-                </div>
+                {/* Score Trend Chart */}
+                {chartData.length > 0 && (
+                    <div className="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 className="text-xl font-bold text-gray-800 mb-4">Score Trend</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="name" />
+                                <YAxis domain={[0, 100]} />
+                                <Tooltip />
+                                <Line
+                                    type="monotone"
+                                    dataKey="score"
+                                    stroke="#8b5cf6"
+                                    strokeWidth={3}
+                                    dot={{ fill: '#8b5cf6', r: 5 }}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-4">
-                    <div className="text-sm opacity-90">Average Score</div>
-                    <div className="text-3xl font-bold mt-1">{stats.avgScore}</div>
-                </div>
+                {/* Company Distribution */}
+                {companyChartData.length > 0 && (
+                    <div className="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 className="text-xl font-bold text-gray-800 mb-4">Interviews by Company</h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={companyChartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="company" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="count" fill="#3b82f6" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
-                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-4">
-                    <div className="text-sm opacity-90">Best Score</div>
-                    <div className="text-3xl font-bold mt-1">{stats.bestScore}</div>
-                </div>
-            </div>
-
-            {/* Score Trend Chart */}
-            {chartData.length > 0 && (
+                {/* Recent Interviews List */}
                 <div className="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Score Trend</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis domain={[0, 100]} />
-                            <Tooltip />
-                            <Line
-                                type="monotone"
-                                dataKey="score"
-                                stroke="#8b5cf6"
-                                strokeWidth={3}
-                                dot={{ fill: '#8b5cf6', r: 5 }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
-
-            {/* Company Distribution */}
-            {companyChartData.length > 0 && (
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Interviews by Company</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={companyChartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="company" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="count" fill="#3b82f6" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
-
-            {/* Recent Interviews List */}
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Interviews</h3>
-                <div className="space-y-3">
-                    {interviews.slice(0, 5).map((interview) => (
-                        <div
-                            key={interview._id}
-                            className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
-                        >
-                            <div className="flex-1">
-                                <div className="font-semibold text-gray-800">
-                                    {interview.company} - {interview.role}
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Recent Interviews</h3>
+                    <div className="space-y-3">
+                        {interviews.slice(0, 5).map((interview) => (
+                            <div
+                                key={interview._id}
+                                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                            >
+                                <div className="flex-1">
+                                    <div className="font-semibold text-gray-800">
+                                        {interview.company} - {interview.role}
+                                    </div>
+                                    <div className="text-sm text-gray-600">
+                                        {interview.type} • {new Date(interview.createdAt).toLocaleDateString()}
+                                    </div>
                                 </div>
-                                <div className="text-sm text-gray-600">
-                                    {interview.type} • {new Date(interview.createdAt).toLocaleDateString()}
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className={`px-3 py-1 rounded-full text-sm font-semibold ${interview.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                <div className="flex items-center gap-4">
+                                    <div className={`px-3 py-1 rounded-full text-sm font-semibold ${interview.status === 'completed' ? 'bg-green-100 text-green-700' :
                                         interview.status === 'in-progress' ? 'bg-yellow-100 text-yellow-700' :
                                             'bg-gray-100 text-gray-700'
-                                    }`}>
-                                    {interview.status}
-                                </div>
-                                {interview.overallScore && (
-                                    <div className="text-2xl font-bold text-blue-600">
-                                        {interview.overallScore}
+                                        }`}>
+                                        {interview.status}
                                     </div>
-                                )}
+                                    {interview.overallScore && (
+                                        <div className="text-2xl font-bold text-blue-600">
+                                            {interview.overallScore}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </MainLayout>
     );
 }
 

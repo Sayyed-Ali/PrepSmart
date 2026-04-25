@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { authAPI, interviewAPI } from '../services/api';
+import MainLayout from '../components/MainLayout'
 
 function Interview() {
     const navigate = useNavigate();
@@ -133,107 +134,109 @@ function Interview() {
     const progress = ((currentIndex + 1) / interview.questions.length) * 100;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-            <div className="max-w-4xl mx-auto pt-6">
-                <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-800">
-                                {company} - {role}
-                            </h2>
-                            <p className="text-gray-600">
-                                {type.charAt(0).toUpperCase() + type.slice(1)} Interview
-                            </p>
+        <MainLayout>
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
+                <div className="max-w-4xl mx-auto pt-6">
+                    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 className="text-2xl font-bold text-gray-800">
+                                    {company} - {role}
+                                </h2>
+                                <p className="text-gray-600">
+                                    {type.charAt(0).toUpperCase() + type.slice(1)} Interview
+                                </p>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-sm text-gray-600">Question</div>
+                                <div className="text-3xl font-bold text-blue-600">
+                                    {currentIndex + 1}/{interview.questions.length}
+                                </div>
+                            </div>
                         </div>
-                        <div className="text-right">
-                            <div className="text-sm text-gray-600">Question</div>
-                            <div className="text-3xl font-bold text-blue-600">
-                                {currentIndex + 1}/{interview.questions.length}
+
+                        <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div
+                                className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                        <div className="flex items-start gap-3 mb-6">
+                            <div className="bg-blue-100 text-blue-600 rounded-lg px-3 py-1 text-sm font-semibold">
+                                {currentQuestion.difficulty}
+                            </div>
+                            <div className="bg-purple-100 text-purple-600 rounded-lg px-3 py-1 text-sm font-semibold">
+                                {currentQuestion.type}
+                            </div>
+                        </div>
+
+                        <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                            {currentQuestion.question}
+                        </h3>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                Your Answer:
+                            </label>
+                            <textarea
+                                value={answer}
+                                onChange={(e) => setAnswer(e.target.value)}
+                                placeholder="Type your answer here... Be specific and provide examples where possible."
+                                rows="12"
+                                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                            />
+                            <div className="flex justify-between items-center mt-2">
+                                <p className="text-sm text-gray-500">
+                                    {answer.length} characters
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                    Recommended: 150-300 words
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                        <div
-                            className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                        />
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
+                        <h4 className="font-bold text-yellow-900 mb-2">💡 Tips for a great answer:</h4>
+                        <ul className="text-sm text-yellow-800 space-y-1">
+                            {type === 'technical' ? (
+                                <>
+                                    <li>• Explain your thought process step-by-step</li>
+                                    <li>• Mention time and space complexity if relevant</li>
+                                    <li>• Discuss edge cases and trade-offs</li>
+                                    <li>• Use specific technical terms and concepts</li>
+                                </>
+                            ) : (
+                                <>
+                                    <li>• Use the STAR method (Situation, Task, Action, Result)</li>
+                                    <li>• Provide specific examples from your experience</li>
+                                    <li>• Show self-awareness and learning</li>
+                                    <li>• Be honest and authentic</li>
+                                </>
+                            )}
+                        </ul>
                     </div>
-                </div>
 
-                <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-                    <div className="flex items-start gap-3 mb-6">
-                        <div className="bg-blue-100 text-blue-600 rounded-lg px-3 py-1 text-sm font-semibold">
-                            {currentQuestion.difficulty}
-                        </div>
-                        <div className="bg-purple-100 text-purple-600 rounded-lg px-3 py-1 text-sm font-semibold">
-                            {currentQuestion.type}
-                        </div>
-                    </div>
-
-                    <h3 className="text-2xl font-bold text-gray-800 mb-6">
-                        {currentQuestion.question}
-                    </h3>
-
-                    <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                            Your Answer:
-                        </label>
-                        <textarea
-                            value={answer}
-                            onChange={(e) => setAnswer(e.target.value)}
-                            placeholder="Type your answer here... Be specific and provide examples where possible."
-                            rows="12"
-                            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
-                        />
-                        <div className="flex justify-between items-center mt-2">
-                            <p className="text-sm text-gray-500">
-                                {answer.length} characters
-                            </p>
-                            <p className="text-sm text-gray-500">
-                                Recommended: 150-300 words
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
-                    <h4 className="font-bold text-yellow-900 mb-2">💡 Tips for a great answer:</h4>
-                    <ul className="text-sm text-yellow-800 space-y-1">
-                        {type === 'technical' ? (
-                            <>
-                                <li>• Explain your thought process step-by-step</li>
-                                <li>• Mention time and space complexity if relevant</li>
-                                <li>• Discuss edge cases and trade-offs</li>
-                                <li>• Use specific technical terms and concepts</li>
-                            </>
+                    <button
+                        onClick={handleNext}
+                        disabled={submitting || !answer.trim()}
+                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {submitting ? (
+                            <div className="flex items-center justify-center gap-2">
+                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                {currentIndex === interview.questions.length - 1 ? 'Evaluating Answers...' : 'Saving...'}
+                            </div>
                         ) : (
-                            <>
-                                <li>• Use the STAR method (Situation, Task, Action, Result)</li>
-                                <li>• Provide specific examples from your experience</li>
-                                <li>• Show self-awareness and learning</li>
-                                <li>• Be honest and authentic</li>
-                            </>
+                            currentIndex === interview.questions.length - 1 ? 'Submit Interview 🎉' : 'Next Question →'
                         )}
-                    </ul>
+                    </button>
                 </div>
-
-                <button
-                    onClick={handleNext}
-                    disabled={submitting || !answer.trim()}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    {submitting ? (
-                        <div className="flex items-center justify-center gap-2">
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            {currentIndex === interview.questions.length - 1 ? 'Evaluating Answers...' : 'Saving...'}
-                        </div>
-                    ) : (
-                        currentIndex === interview.questions.length - 1 ? 'Submit Interview 🎉' : 'Next Question →'
-                    )}
-                </button>
             </div>
-        </div>
+        </MainLayout>
     );
 }
 

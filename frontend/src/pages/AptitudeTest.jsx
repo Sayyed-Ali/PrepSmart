@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { authAPI, aptitudeAPI } from '../services/api'
+import MainLayout from '../components/MainLayout'
 
 function AptitudeTest() {
     const navigate = useNavigate()
@@ -151,85 +152,87 @@ function AptitudeTest() {
     const progress = ((currentIndex + 1) / questions.length) * 100
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
-            <div className="max-w-3xl mx-auto pt-6">
-                {/* Header */}
-                <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-                    <div className="flex justify-between items-center mb-3">
-                        <div>
-                            <span className="text-sm font-semibold text-gray-600">
-                                Question {currentIndex + 1} of {questions.length}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="text-sm font-semibold text-gray-600">
-                                {category.toUpperCase()} • {difficulty.toUpperCase()}
+        <MainLayout>
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+                <div className="max-w-3xl mx-auto pt-6">
+                    {/* Header */}
+                    <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+                        <div className="flex justify-between items-center mb-3">
+                            <div>
+                                <span className="text-sm font-semibold text-gray-600">
+                                    Question {currentIndex + 1} of {questions.length}
+                                </span>
                             </div>
-                            <div className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-600' : 'text-blue-600'
-                                }`}>
-                                {timeLeft}s
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                            className="bg-blue-600 h-2 rounded-full transition-all"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-                </div>
-
-                {/* Question Card */}
-                <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                        {currentQuestion.question}
-                    </h2>
-
-                    {/* Options */}
-                    <div className="space-y-3">
-                        {currentQuestion.options.map((option, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSelectedAnswer(option)}
-                                className={`w-full p-4 rounded-xl border-2 text-left transition-all ${selectedAnswer === option
-                                    ? 'border-blue-600 bg-blue-50'
-                                    : 'border-gray-200 hover:border-blue-300'
-                                    }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedAnswer === option
-                                        ? 'border-blue-600 bg-blue-600'
-                                        : 'border-gray-300'
-                                        }`}>
-                                        {selectedAnswer === option && (
-                                            <div className="w-2 h-2 bg-white rounded-full" />
-                                        )}
-                                    </div>
-                                    <span className="font-medium">{option}</span>
+                            <div className="flex items-center gap-4">
+                                <div className="text-sm font-semibold text-gray-600">
+                                    {category.toUpperCase()} • {difficulty.toUpperCase()}
                                 </div>
-                            </button>
-                        ))}
+                                <div className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-600' : 'text-blue-600'
+                                    }`}>
+                                    {timeLeft}s
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                                className="bg-blue-600 h-2 rounded-full transition-all"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </div>
                     </div>
+
+                    {/* Question Card */}
+                    <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                            {currentQuestion.question}
+                        </h2>
+
+                        {/* Options */}
+                        <div className="space-y-3">
+                            {currentQuestion.options.map((option, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setSelectedAnswer(option)}
+                                    className={`w-full p-4 rounded-xl border-2 text-left transition-all ${selectedAnswer === option
+                                        ? 'border-blue-600 bg-blue-50'
+                                        : 'border-gray-200 hover:border-blue-300'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${selectedAnswer === option
+                                            ? 'border-blue-600 bg-blue-600'
+                                            : 'border-gray-300'
+                                            }`}>
+                                            {selectedAnswer === option && (
+                                                <div className="w-2 h-2 bg-white rounded-full" />
+                                            )}
+                                        </div>
+                                        <span className="font-medium">{option}</span>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                        onClick={handleNext}
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
+                    >
+                        {currentIndex === questions.length - 1 ? 'Submit Test' : 'Next Question'} →
+                    </button>
+
+                    {/* Warning */}
+                    {!selectedAnswer && (
+                        <p className="text-center text-yellow-600 text-sm mt-4">
+                            ⚠️ No answer selected - will be marked as incorrect
+                        </p>
+                    )}
                 </div>
-
-                {/* Next Button */}
-                <button
-                    onClick={handleNext}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg"
-                >
-                    {currentIndex === questions.length - 1 ? 'Submit Test' : 'Next Question'} →
-                </button>
-
-                {/* Warning */}
-                {!selectedAnswer && (
-                    <p className="text-center text-yellow-600 text-sm mt-4">
-                        ⚠️ No answer selected - will be marked as incorrect
-                    </p>
-                )}
             </div>
-        </div>
+        </MainLayout>
     )
 }
 
