@@ -17,7 +17,10 @@ import AddCompany from './pages/Admin/AddCompany'
 import AddAptitudeQuestion from './pages/Admin/AddAptitudeQuestion'
 import Progress from './pages/Progress'
 import DSAPractice from './pages/DSAPractice';
-import DSAProblemDetail from './pages/DSAProblemDetail';
+import DSAProblemDetail from './pages/DSAProblemDetail'
+import Settings from './pages/Settings';
+import AddDSAQuestion from './pages/Admin/AddDSAQuestion';
+import AddVacancy from './pages/Admin/AddVacancy';
 
 import './App.css'
 
@@ -62,6 +65,8 @@ function App() {
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/add-company" element={<AdminRoute><AddCompany /></AdminRoute>} />
           <Route path="/admin/add-aptitude-question" element={<AdminRoute><AddAptitudeQuestion /></AdminRoute>} />
+          <Route path="/admin/add-dsa-question" element={<AdminRoute><AddDSAQuestion /></AdminRoute>} />
+          <Route path="/admin/add-vacancy" element={<AdminRoute><AddVacancy /></AdminRoute>} />
 
           {/* Progress Routes */}
           <Route path="/progress" element={<ProtectedRoute><Progress /></ProtectedRoute>} />
@@ -69,6 +74,11 @@ function App() {
           {/* DSA Routes */}
           <Route path="/dsa" element={<ProtectedRoute><DSAPractice /></ProtectedRoute>} />
           <Route path="/dsa/:id" element={<ProtectedRoute><DSAProblemDetail /></ProtectedRoute>} />
+
+          {/* Settings Route */}
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+
 
         </Routes>
       </div>
