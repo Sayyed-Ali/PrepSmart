@@ -1,97 +1,162 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 
 function CalendarWidget() {
-    const [currentMonth] = useState('October 2024')
+    const [vacancies, setVacancies] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // calendar setup
-    const dayLabels = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
-    const calendarDates = [
-        null, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
-    ]
+    useEffect(() => {
+        fetchVacancies();
+    }, []);
 
-    const datesWithEvents = [5, 12, 18]
-    const todayDate = 15
-
-    // upcoming events list
-    const events = [
-        {
-            title: 'Mock Interview - Apple',
-            time: 'Tomorrow at 10:00 AM'
-        },
-        {
-            title: 'Aptitude Test - Advanced',
-            time: 'Oct 18 at 2:00 PM'
+    const fetchVacancies = async () => {
+        try {
+            const response = await fetch('http://localhost:5001/api/vacancies?status=active');
+            const data = await response.json();
+            setVacancies(data.vacancies || []);
+        } catch (error) {
+            console.error('Error fetching vacancies:', error);
+            setVacancies([]);
+        } finally {
+            setLoading(false);
         }
-    ]
+    };
+
+    if (loading) {
+        return (
+            <div className="text-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+                <p className="text-sm text-gray-500 mt-2">Loading vacancies...</p>
+            </div>
+        );
+    }
 
     return (
-        <div className="bg-white rounded-xl p-5 lg:p-6 shadow-sm sticky top-6">
-            {/* month header with navigation arrows */}
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-base lg:text-lg font-bold text-gray-800">{currentMonth}</h3>
-                <div className="flex gap-2">
-                    <button className="w-7 h-7 bg-gray-100 rounded-md hover:bg-purple-600 hover:text-white transition-all text-sm">
-                        ←
-                    </button>
-                    <button className="w-7 h-7 bg-gray-100 rounded-md hover:bg-purple-600 hover:text-white transition-all text-sm">
-                        →
-                    </button>
+        <div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    💼 Job Vacancies
+                </h3>
+                <button
+                    onClick={() => window.location.href = '/vacancies'}
+                    className="text-xs text-purple-600 hover:text-purple-700 font-semibold"
+                >
+                    View All →
+                </button>
+            </div>
+
+            {/* Vacancies List */}
+            {vacancies.length === 0 ? (
+                <div className="text-center py-12">
+                    <div className="text-5xl mb-3">💼</div>
+                    <p className="text-gray-600 text-sm">No active job postings</p>
+                    <p className="text-xs text-gray-500 mt-1">Check back soon!</p>
                 </div>
-            </div>
+            ) : (
+                <div className="space-y-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+                    {vacancies.map((vacancy) => {
+                        const deadline = new Date(vacancy.deadline);
+                        const now = new Date();
+                        const daysLeft = Math.ceil((deadline - now) / (1000 * 60 * 60 * 24));
 
-            {/* calendar grid */}
-            <div className="grid grid-cols-7 gap-1.5 mb-5">
-                {/* day headers (S M T W T F S) */}
-                {dayLabels.map((day, i) => (
-                    <div key={i} className="text-center text-xs font-semibold text-gray-600 py-1">
-                        {day}
-                    </div>
-                ))}
+                        return (
+                            <div
+                                key={vacancy._id}
+                                className="border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-purple-200 transition-all group cursor-pointer"
+                            >
+                                {/* Company & Role */}
+                                <div className="mb-2">
+                                    <h4 className="font-semibold text-gray-800 text-sm group-hover:text-purple-600 transition">
+                                        {vacancy.role}
+                                    </h4>
+                                    <p className="text-xs text-gray-600 mt-0.5">{vacancy.company}</p>
+                                </div>
 
-                {/* actual dates */}
-                {calendarDates.map((date, i) => {
-                    let dateClass = 'aspect-square flex items-center justify-center rounded-md text-xs cursor-pointer transition-all'
+                                {/* Details */}
+                                <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-3">
+                                    <span className="flex items-center gap-1">
+                                        📍 {vacancy.location}
+                                    </span>
+                                    <span>•</span>
+                                    <span>{vacancy.experience}</span>
+                                    {vacancy.salary && (
+                                        <>
+                                            <span>•</span>
+                                            <span className="text-green-600 font-medium">{vacancy.salary}</span>
+                                        </>
+                                    )}
+                                </div>
 
-                    if (date === null) {
-                        dateClass = ''
-                    } else if (date === todayDate) {
-                        dateClass += ' bg-purple-600 text-white font-bold'
-                    } else if (datesWithEvents.includes(date)) {
-                        dateClass += ' bg-blue-100 text-blue-600 font-medium'
-                    } else {
-                        dateClass += ' hover:bg-gray-100'
-                    }
+                                {/* Type Badge */}
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-semibold ${vacancy.type === 'Internship' ? 'bg-blue-100 text-blue-700' :
+                                            vacancy.type === 'Full-time' ? 'bg-green-100 text-green-700' :
+                                                'bg-purple-100 text-purple-700'
+                                        }`}>
+                                        {vacancy.type}
+                                    </span>
+                                    <span className={`text-xs font-semibold ${daysLeft <= 3 ? 'text-red-600' :
+                                            daysLeft <= 7 ? 'text-orange-600' :
+                                                'text-gray-600'
+                                        }`}>
+                                        {daysLeft > 0 ? `⏰ ${daysLeft}d left` : '⏰ Expired'}
+                                    </span>
+                                </div>
 
-                    return (
-                        <div key={i} className={dateClass}>
-                            {date}
-                        </div>
-                    )
-                })}
-            </div>
+                                {/* Skills */}
+                                {vacancy.skills && vacancy.skills.length > 0 && (
+                                    <div className="flex flex-wrap gap-1 mb-3">
+                                        {vacancy.skills.slice(0, 3).map((skill, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs"
+                                            >
+                                                {skill}
+                                            </span>
+                                        ))}
+                                        {vacancy.skills.length > 3 && (
+                                            <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                                                +{vacancy.skills.length - 3}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
 
-            {/* upcoming events section */}
-            <div>
-                <h4 className="font-bold text-gray-800 mb-3 text-sm lg:text-base">Upcoming Sessions</h4>
-                <div className="space-y-2">
-                    {events.map((event, idx) => (
-                        <div
-                            key={idx}
-                            className="p-3 bg-gray-50 rounded-lg border-l-3 border-purple-600"
-                        >
-                            <div className="font-semibold text-gray-800 text-xs lg:text-sm">
-                                {event.title}
+                                {/* Apply Button */}
+                                <a
+                                    href={vacancy.applyLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block w-full text-center bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 rounded-lg text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 transition"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Apply Now →
+                                </a>
                             </div>
-                            <div className="text-xs text-gray-600 mt-0.5">
-                                {event.time}
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
-            </div>
+            )}
+
+            {/* Custom Scrollbar Styles */}
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: #d1d5db;
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #9ca3af;
+                }
+            `}</style>
         </div>
-    )
+    );
 }
 
-export default CalendarWidget
+export default CalendarWidget;
