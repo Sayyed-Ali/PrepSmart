@@ -8,7 +8,11 @@ connectDB()
 
 const app = express()
 
-app.use(cors())
+app.use(cors({
+    origin: "https://prepsmart-frontend.onrender.com",
+    credentials: true
+}))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 

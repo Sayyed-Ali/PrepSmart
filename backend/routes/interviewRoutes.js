@@ -258,6 +258,39 @@ router.post('/:id/submit', async (req, res) => {
 
         await interview.save();
 
+        // PRACTICE ACTIVITY TRACKING - start
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let activity = await PracticeActivity.findOne({
+                user: interview.user,
+                date: today
+            });
+
+            if (!activity) {
+                activity = new PracticeActivity({
+                    user: interview.user,
+                    date: today,
+                    activities: {
+                        dsa: { practiced: false, problemsSolved: 0 },
+                        interview: { practiced: true, sessionsCompleted: 1 },
+                        aptitude: { practiced: false, testsCompleted: 0 }
+                    }
+                });
+            } else {
+                activity.activities.interview.practiced = true;
+                activity.activities.interview.sessionsCompleted += 1;
+            }
+
+            await activity.save();
+            console.log('Interview practice logged for user:', interview.user);
+        } catch (activityError) {
+            // Don't fail the interview submission if activity logging fails
+            console.error('Error logging practice activity:', activityError);
+        }
+        //PRACTICE ACTIVITY TRACKING - END
+
         res.json({
             success: true,
             data: interview

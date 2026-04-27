@@ -1,9 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const AptitudeQuestion = require('../models/AptitudeQuestion')
 const AptitudeTest = require('../models/AptitudeTest')
 const { generateAptitudeQuestions } = require('../services/aiService')
-
+const AptitudeQuestion = require('../models/AptitudeQuestion');
+const PracticeActivity = require('../models/PracticeActivity');
 // POST /api/aptitude/generate - generate questions using AI
 router.post('/generate', async (req, res) => {
     try {
@@ -74,6 +74,39 @@ router.post('/submit', async (req, res) => {
         })
 
         console.log('Test submitted:', test._id)
+
+        //PRACTICE ACTIVITY TRACKING - START
+        try {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let activity = await PracticeActivity.findOne({
+                user: userId,
+                date: today
+            });
+
+            if (!activity) {
+                activity = new PracticeActivity({
+                    user: userId,
+                    date: today,
+                    activities: {
+                        dsa: { practiced: false, problemsSolved: 0 },
+                        interview: { practiced: false, sessionsCompleted: 0 },
+                        aptitude: { practiced: true, testsCompleted: 1 }
+                    }
+                });
+            } else {
+                activity.activities.aptitude.practiced = true;
+                activity.activities.aptitude.testsCompleted += 1;
+            }
+
+            await activity.save();
+            console.log('Aptitude practice logged for user:', userId);
+        } catch (activityError) {
+            // Don't fail the test submission if activity logging fails
+            console.error('Error logging practice activity:', activityError);
+        }
+        //PRACTICE ACTIVITY TRACKING - END
 
         res.json({
             success: true,
