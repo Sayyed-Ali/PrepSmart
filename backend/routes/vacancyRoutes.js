@@ -29,4 +29,38 @@ router.get('/vacancies', async (req, res) => {
     }
 });
 
+router.post('/vacancies', async (req, res) => {
+
+    try {
+
+        const newVacancy = new Vacancy(req.body);
+
+        await newVacancy.save();
+
+        res.status(201).json({
+
+            success: true,
+
+            message: 'Vacancy created successfully',
+
+            vacancy: newVacancy
+
+        });
+
+    } catch (error) {
+
+        console.error('Error creating vacancy:', error);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: 'Failed to create vacancy'
+
+        });
+
+    }
+
+});
+
 module.exports = router;
