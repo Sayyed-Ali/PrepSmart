@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function AddDSAQuestion() {
     const navigate = useNavigate();
@@ -69,7 +70,7 @@ function AddDSAQuestion() {
         setMessage({ type: '', text: '' });
 
         try {
-            const response = await fetch('http://localhost:5001/api/admin/dsa-problems', {
+            const response = await fetch(`${BASE_URL}/api/admin/dsa-problems`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,8 +128,8 @@ function AddDSAQuestion() {
 
                 {message.text && (
                     <div className={`mb-6 p-4 rounded-lg ${message.type === 'success'
-                            ? 'bg-green-50 border border-green-200 text-green-700'
-                            : 'bg-red-50 border border-red-200 text-red-700'
+                        ? 'bg-green-50 border border-green-200 text-green-700'
+                        : 'bg-red-50 border border-red-200 text-red-700'
                         }`}>
                         {message.text}
                     </div>

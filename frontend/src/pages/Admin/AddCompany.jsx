@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function AddCompany() {
     const navigate = useNavigate()
@@ -98,7 +99,7 @@ function AddCompany() {
                 commonQuestions: formData.commonQuestions
             }
 
-            const response = await fetch('http://localhost:5001/api/admin/companies', {
+            const response = await fetch(`${BASE_URL}/api/admin/companies`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(companyData)

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import MainLayout from '../components/MainLayout'
+const BASE_URL = import.meta.env.VITE_BASE_URL
+
 
 function Companies() {
     const navigate = useNavigate()
@@ -15,7 +17,7 @@ function Companies() {
 
     const fetchCompanies = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/admin/companies')
+            const response = await fetch(`${BASE_URL}/api/admin/companies`)
             const data = await response.json()
 
             if (data.success) {

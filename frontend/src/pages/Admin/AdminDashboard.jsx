@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authAPI } from '../../services/api'
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function AdminDashboard() {
     const navigate = useNavigate()
@@ -66,8 +67,8 @@ function AdminDashboard() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-4 font-semibold transition border-b-2 whitespace-nowrap ${activeTab === tab.id
-                                        ? 'border-red-600 text-red-600'
-                                        : 'border-transparent text-gray-600 hover:text-gray-800'
+                                    ? 'border-red-600 text-red-600'
+                                    : 'border-transparent text-gray-600 hover:text-gray-800'
                                     }`}
                             >
                                 <span className="mr-2">{tab.icon}</span>
@@ -360,7 +361,7 @@ function UsersTab() {
 
     const fetchUsers = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/admin/users')
+            const response = await fetch(`${BASE_URL}/api/admin/users`)
             const data = await response.json()
             setUsers(data.users || [])
         } catch (error) {
@@ -374,7 +375,7 @@ function UsersTab() {
         const newRole = currentRole === 'admin' ? 'student' : 'admin'
 
         try {
-            const response = await fetch(`http://localhost:5001/api/admin/users/${userId}/role`, {
+            const response = await fetch(`${BASE_URL}/api/admin/users/${userId}/role`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: newRole })

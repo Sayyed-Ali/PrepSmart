@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import MainLayout from '../components/MainLayout'
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function Settings() {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ function Settings() {
         setMessage({ type: '', text: '' });
 
         try {
-            const response = await fetch('http://localhost:5001/api/auth/update-profile', {
+            const response = await fetch(`${BASE_URL}/api/auth/update-profile`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +90,7 @@ function Settings() {
         }
 
         try {
-            const response = await fetch('http://localhost:5001/api/auth/change-password', {
+            const response = await fetch(`${BASE_URL}/api/auth/change-password`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

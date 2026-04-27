@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { authAPI, interviewAPI, dsaAPI } from '../services/api';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import MainLayout from '../components/MainLayout'
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function Progress() {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ function Progress() {
                 const [interviewResponse, dsaResponse, aptitudeResponse] = await Promise.all([
                     interviewAPI.getUserInterviews(userId),
                     dsaAPI.getStats(),
-                    fetch(`http://localhost:5001/api/aptitude/results/${userId}`).then(res => res.json()).catch(() => ({ tests: [] }))
+                    fetch(`${BASE_URL}/api/aptitude/results/${userId}`).then(res => res.json()).catch(() => ({ tests: [] }))
                 ]);
 
                 // Handle interview data
@@ -615,8 +616,8 @@ function Progress() {
                                                                 <span className="text-gray-500 font-mono">#{safeAptitudeTests.length - index}</span>
                                                                 <span className="font-semibold text-gray-800 capitalize">{test.category}</span>
                                                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${test.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                                                                        test.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                                                                            'bg-red-100 text-red-700'
+                                                                    test.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                                                        'bg-red-100 text-red-700'
                                                                     }`}>
                                                                     {test.difficulty}
                                                                 </span>
@@ -632,8 +633,8 @@ function Progress() {
                                                         <div className="text-center">
                                                             <div className="text-sm text-gray-600">Score</div>
                                                             <div className={`text-2xl font-bold ${parseFloat(test.score.percentage) >= 70 ? 'text-green-600' :
-                                                                    parseFloat(test.score.percentage) >= 50 ? 'text-yellow-600' :
-                                                                        'text-red-600'
+                                                                parseFloat(test.score.percentage) >= 50 ? 'text-yellow-600' :
+                                                                    'text-red-600'
                                                                 }`}>
                                                                 {Math.round(test.score.percentage)}%
                                                             </div>

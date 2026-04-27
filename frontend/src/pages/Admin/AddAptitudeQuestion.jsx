@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 function AddAptitudeQuestion() {
     const navigate = useNavigate()
@@ -61,7 +62,7 @@ function AddAptitudeQuestion() {
                 return
             }
 
-            const response = await fetch('http://localhost:5001/api/admin/aptitude/questions', {
+            const response = await fetch(`${BASE_URL}/api/admin/aptitude/questions`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -109,7 +110,7 @@ function AddAptitudeQuestion() {
                 return
             }
 
-            const response = await fetch('http://localhost:5001/api/admin/aptitude/questions/bulk', {
+            const response = await fetch(`${BASE_URL}/api/admin/aptitude/questions/bulk`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ questions })
