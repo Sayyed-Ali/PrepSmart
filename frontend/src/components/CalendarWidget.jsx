@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+const BASE_URL = import.meta.env.VITE_BASE_URL
+
 function CalendarWidget() {
     const [vacancies, setVacancies] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -10,7 +12,7 @@ function CalendarWidget() {
 
     const fetchVacancies = async () => {
         try {
-            const response = await fetch('http://localhost:5001/api/vacancies?status=active');
+            const response = await fetch(`${BASE_URL}/api/vacancies?status=active`);
             const data = await response.json();
             setVacancies(data.vacancies || []);
         } catch (error) {
@@ -90,14 +92,14 @@ function CalendarWidget() {
                                 {/* Type Badge */}
                                 <div className="flex items-center justify-between mb-3">
                                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${vacancy.type === 'Internship' ? 'bg-blue-100 text-blue-700' :
-                                            vacancy.type === 'Full-time' ? 'bg-green-100 text-green-700' :
-                                                'bg-purple-100 text-purple-700'
+                                        vacancy.type === 'Full-time' ? 'bg-green-100 text-green-700' :
+                                            'bg-purple-100 text-purple-700'
                                         }`}>
                                         {vacancy.type}
                                     </span>
                                     <span className={`text-xs font-semibold ${daysLeft <= 3 ? 'text-red-600' :
-                                            daysLeft <= 7 ? 'text-orange-600' :
-                                                'text-gray-600'
+                                        daysLeft <= 7 ? 'text-orange-600' :
+                                            'text-gray-600'
                                         }`}>
                                         {daysLeft > 0 ? `⏰ ${daysLeft}d left` : '⏰ Expired'}
                                     </span>
