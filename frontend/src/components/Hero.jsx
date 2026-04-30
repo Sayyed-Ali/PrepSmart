@@ -1,8 +1,8 @@
 import { ArrowRight, Sparkles } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'  // Add this
+import { useNavigate } from 'react-router-dom'
 
 const Hero = () => {
-    const navigate = useNavigate()  // Add this
+    const navigate = useNavigate()
 
     return (
         <section className="pt-16 pb-24 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-purple-50 via-white to-indigo-50">

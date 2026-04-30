@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { Menu, X } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'  // Add this
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
-    const navigate = useNavigate()  // Add this
+    const navigate = useNavigate()
 
     const toggleMenu = () => {
         setIsOpen(!isOpen)

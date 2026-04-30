@@ -22,8 +22,6 @@ function InterviewResult() {
             navigate('/dashboard');
         }
     }, [navigate, result]);
-
-    // ✅ ENHANCED SAFETY CHECK - Check for questions array
     if (!result || !user || !result.questions || !Array.isArray(result.questions)) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
@@ -42,11 +40,11 @@ function InterviewResult() {
     };
 
     const getScoreGrade = (score) => {
-        if (score >= 90) return { grade: 'A+', emoji: '🌟' };
-        if (score >= 80) return { grade: 'A', emoji: '🎉' };
-        if (score >= 70) return { grade: 'B', emoji: '👍' };
-        if (score >= 60) return { grade: 'C', emoji: '😊' };
-        return { grade: 'D', emoji: '📚' };
+        if (score >= 90) return { grade: 'A+', emoji: '' };
+        if (score >= 80) return { grade: 'A', emoji: '' };
+        if (score >= 70) return { grade: 'B', emoji: '' };
+        if (score >= 60) return { grade: 'C', emoji: '' };
+        return { grade: 'D', emoji: '' };
     };
 
     const scoreInfo = getScoreGrade(result.overallScore || 0);
@@ -221,7 +219,7 @@ function InterviewResult() {
                     {result.feedback?.recommendations && result.feedback.recommendations.length > 0 && (
                         <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-2xl shadow-xl p-8 mb-6">
                             <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                                📚 Next Steps
+                                Next Steps
                             </h3>
                             <ul className="space-y-2">
                                 {result.feedback.recommendations.map((rec, index) => (

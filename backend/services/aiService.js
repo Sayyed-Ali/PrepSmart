@@ -1,4 +1,3 @@
-// COMPLETE FILE - Copy exactly as is
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
@@ -31,7 +30,7 @@ IMPORTANT: Return ONLY valid JSON. No markdown, no explanation, no backticks.
             generationConfig: {
                 temperature: 0.7,
                 maxOutputTokens: 2000,
-                responseMimeType: "application/json"  // ✅ Force JSON response
+                responseMimeType: "application/json"
             }
         });
 
@@ -57,7 +56,7 @@ const generateInterviewQuestions = async ({ company, role, type, jobDescription,
             generationConfig: {
                 temperature: 0.8,
                 maxOutputTokens: 2500,
-                responseMimeType: "application/json"  // ✅ Force JSON response
+                responseMimeType: "application/json"
             }
         });
 
@@ -91,7 +90,7 @@ IMPORTANT: Return ONLY valid JSON. No markdown, no explanation.
         // Parse JSON
         const data = JSON.parse(content);
 
-        // ✅ Validate and return
+        //  Validate and return
         if (data.questions && Array.isArray(data.questions)) {
             return data.questions;
         }
@@ -100,7 +99,6 @@ IMPORTANT: Return ONLY valid JSON. No markdown, no explanation.
 
     } catch (error) {
         console.error('AI generation failed:', error.message);
-        // ✅ Return fallback questions
         return getDefaultInterviewQuestions(type);
     }
 };
@@ -135,18 +133,16 @@ Answer: ${answer.substring(0, 500)}`;
         const result = await model.generateContent(prompt);
         let content = result.response.text().trim();
 
-        // ✅ DEBUG: Log raw response
-        console.log('🔍 RAW GEMINI RESPONSE:', content);
-        console.log('🔍 LENGTH:', content.length);
+        // console.log(' RAW GEMINI RESPONSE:', content);
+        // console.log(' LENGTH:', content.length);
 
         content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
-        // ✅ DEBUG: Log cleaned response
-        console.log('🔍 CLEANED RESPONSE:', content);
+        // console.log('🔍 CLEANED RESPONSE:', content);
 
         const parsed = JSON.parse(content);
 
-        console.log('✅ PARSED SUCCESSFULLY:', parsed);
+        console.log('PARSED SUCCESSFULLY:', parsed);
 
         return {
             score: Math.min(10, Math.max(1, Number(parsed.score))) || 5,
@@ -156,7 +152,7 @@ Answer: ${answer.substring(0, 500)}`;
         };
 
     } catch (error) {
-        console.log('❌ GEMINI ERROR:', error.message);
+        console.log(' GEMINI ERROR:', error.message);
         console.log('AI evaluation failed, using smart fallback');
 
         const words = answer.trim().split(/\s+/).length;
@@ -186,7 +182,7 @@ Answer: ${answer.substring(0, 500)}`;
     }
 };
 
-// ✅ Default fallback questions
+// Default fallback questions
 const getDefaultInterviewQuestions = (type) => {
     const technical = [
         {

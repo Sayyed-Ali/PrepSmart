@@ -48,7 +48,6 @@ const userSchema = new mongoose.Schema({
 })
 
 // hash password before saving to database
-// NOTE: Mongoose 6+ doesn't need next() callback - just use async/await
 userSchema.pre('save', async function () {
     // only hash if password is modified
     if (!this.isModified('password')) {

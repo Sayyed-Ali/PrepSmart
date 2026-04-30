@@ -57,7 +57,7 @@ function DSAProblemDetail() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
                 <div className="text-center">
-                    <div className="text-6xl mb-4">❌</div>
+                    <div className="text-6xl mb-4"></div>
                     <p className="text-gray-600 text-lg mb-4">Problem not found</p>
                     <button
                         onClick={() => navigate('/dsa')}
@@ -171,9 +171,9 @@ function DSAProblemDetail() {
                         {/* Approach Details */}
                         <div className="bg-gray-50 rounded-lg p-6">
                             <h3 className="text-lg font-bold text-gray-800 mb-3">
-                                {selectedApproach === 'bruteForce' && '🔨 Brute Force Approach'}
+                                {selectedApproach === 'bruteForce' && ' Brute Force Approach'}
                                 {selectedApproach === 'better' && '⚡ Better Approach'}
-                                {selectedApproach === 'optimal' && '🏆 Optimal Approach'}
+                                {selectedApproach === 'optimal' && ' Optimal Approach'}
                             </h3>
                             <p className="text-gray-700 leading-relaxed">
                                 {selectedApproach === 'bruteForce' && problem.approaches.bruteForce}
@@ -196,7 +196,7 @@ function DSAProblemDetail() {
                                     className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
                                 >
                                     <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white text-xl">
-                                        📝
+
                                     </div>
                                     <div>
                                         <div className="font-semibold text-gray-800">Article</div>

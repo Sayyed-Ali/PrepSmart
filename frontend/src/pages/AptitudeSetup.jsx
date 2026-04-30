@@ -85,7 +85,6 @@ function AptitudeSetup() {
                         </p>
                     </div>
 
-                    {/* ✅ ADD THIS SECTION - Company Selection */}
                     <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">
                             Select Company (Optional)

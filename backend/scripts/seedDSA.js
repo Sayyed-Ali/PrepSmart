@@ -6,8 +6,8 @@ const DSAProblem = require('../models/DSAProblem');
 const MONGODB_URI = process.env.MONGO_URI;
 
 if (!MONGODB_URI) {
-    console.error('❌ MONGODB_URI not found in .env file!');
-    console.error('📝 Make sure backend/.env exists and has MONGODB_URI defined');
+    console.error(' MONGODB_URI not found in .env file!');
+    console.error(' Make sure backend/.env exists and has MONGODB_URI defined');
     process.exit(1);
 }
 
@@ -83,25 +83,25 @@ const amazonProblems = [
 async function seedDSAProblems() {
     try {
         await mongoose.connect(MONGODB_URI);
-        console.log('✅ Connected to MongoDB Atlas');
+        console.log(' Connected to MongoDB Atlas');
 
         // Clear existing DSA problems
         const deleted = await DSAProblem.deleteMany({});
-        console.log(`🗑️  Cleared ${deleted.deletedCount} existing DSA problems`);
+        console.log(`  Cleared ${deleted.deletedCount} existing DSA problems`);
 
         // Insert Amazon problems
         const inserted = await DSAProblem.insertMany(amazonProblems);
-        console.log(`✅ Inserted ${inserted.length} Amazon DSA problems`);
+        console.log(` Inserted ${inserted.length} Amazon DSA problems`);
 
-        console.log('\n📝 Problems added:');
+        console.log('\n Problems added:');
         inserted.forEach((problem, index) => {
             console.log(`${index + 1}. ${problem.title} (${problem.difficulty}) - ${problem.category}`);
         });
 
         await mongoose.connection.close();
-        console.log('\n🎉 Seed completed successfully!');
+        console.log('\n Seed completed successfully!');
     } catch (error) {
-        console.error('❌ Error seeding data:', error);
+        console.error(' Error seeding data:', error);
         process.exit(1);
     }
 }

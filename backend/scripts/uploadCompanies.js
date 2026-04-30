@@ -304,7 +304,7 @@ const companiesData = [
   }
 ]
 
-// function to upload companies
+// upload companies
 async function uploadCompanies() {
   try {
     console.log('Connecting to MongoDB...')
@@ -327,11 +327,11 @@ async function uploadCompanies() {
       console.log(`✓ Added ${companyData.name}`)
     }
 
-    console.log('\n✅ Upload complete!')
+    console.log('\n Upload complete!')
     console.log(`Total companies in database: ${await Company.countDocuments()}`)
 
   } catch (error) {
-    console.error('❌ Error uploading companies:', error.message)
+    console.error(' Error uploading companies:', error.message)
   } finally {
     await mongoose.connection.close()
     console.log('\nDatabase connection closed')

@@ -49,15 +49,15 @@ const sampleVacancies = [
 async function seedVacancies() {
     try {
         await mongoose.connect(MONGO_URI);
-        console.log('✅ Connected to MongoDB');
+        console.log(' Connected to MongoDB');
 
         await Vacancy.deleteMany({});
         await Vacancy.insertMany(sampleVacancies);
 
-        console.log('✅ Seeded 3 job vacancies');
+        console.log(' Seeded 3 job vacancies');
         await mongoose.connection.close();
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error(' Error:', error);
         process.exit(1);
     }
 }

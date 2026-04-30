@@ -8,7 +8,6 @@ const DSAProblem = require('../models/DSAProblem');
 const isAdmin = async (req, res, next) => {
     try {
         // for now, we'll skip JWT verification and just check if user exists
-        // TODO: add proper JWT middleware later
         const { userId } = req.body
 
         if (!userId) {

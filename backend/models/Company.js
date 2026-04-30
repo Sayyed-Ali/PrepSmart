@@ -28,7 +28,7 @@ const companySchema = new mongoose.Schema({
         }
     },
 
-    // commonly asked questions - FIXED SCHEMA
+    // commonly asked questions
     commonQuestions: [{
         question: {
             type: String,

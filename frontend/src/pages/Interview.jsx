@@ -35,7 +35,7 @@ function Interview() {
     const loadInterview = async () => {
         try {
             const response = await interviewAPI.getById(interviewId);
-            setInterview(response.data);  // ✅ Changed from response.interview
+            setInterview(response.data);
             setStartTime(Date.now());
         } catch (error) {
             console.error('Error loading interview:', error);
@@ -89,7 +89,7 @@ function Interview() {
             if (response.success) {
                 navigate('/interview-result', {
                     state: {
-                        result: response.data  // ✅ Changed from response.result
+                        result: response.data
                     }
                 });
             }
@@ -117,7 +117,7 @@ function Interview() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
                 <div className="text-center">
-                    <div className="text-6xl mb-4">❌</div>
+                    <div className="text-6xl mb-4"></div>
                     <div className="text-gray-600 text-xl">No questions available</div>
                     <button
                         onClick={() => navigate('/interview-setup')}
@@ -231,7 +231,7 @@ function Interview() {
                                 {currentIndex === interview.questions.length - 1 ? 'Evaluating Answers...' : 'Saving...'}
                             </div>
                         ) : (
-                            currentIndex === interview.questions.length - 1 ? 'Submit Interview 🎉' : 'Next Question →'
+                            currentIndex === interview.questions.length - 1 ? 'Submit Interview ' : 'Next Question →'
                         )}
                     </button>
                 </div>

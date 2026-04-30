@@ -23,11 +23,10 @@ function Dashboard() {
                 return
             }
 
-            console.log('Current user object:', currentUser); // ✅ DEBUG - see what's in the user object
+            console.log('Current user object:', currentUser);
 
             setUser(currentUser)
 
-            // ✅ FIXED - Try both _id and id
             const userId = currentUser._id || currentUser.id;
 
             if (!userId) {

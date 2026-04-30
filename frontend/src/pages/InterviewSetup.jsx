@@ -73,7 +73,7 @@ function InterviewSetup() {
             if (response.success) {
                 navigate('/interview', {
                     state: {
-                        interviewId: response.data.interviewId,  // ✅ Changed from response.interview.id
+                        interviewId: response.data.interviewId,
                         company: response.data.company,
                         role: response.data.role,
                         type: response.data.type
@@ -152,9 +152,9 @@ function InterviewSetup() {
                             </h2>
                             <div className="grid md:grid-cols-3 gap-4">
                                 {[
-                                    { id: 'technical', name: 'Technical', icon: '💻', desc: 'Coding, system design, algorithms' },
-                                    { id: 'behavioral', name: 'Behavioral', icon: '💬', desc: 'Leadership, teamwork, conflict' },
-                                    { id: 'mixed', name: 'Mixed', icon: '🔀', desc: 'Both technical & behavioral' }
+                                    { id: 'technical', name: 'Technical', icon: '', desc: 'Coding, system design, algorithms' },
+                                    { id: 'behavioral', name: 'Behavioral', icon: '', desc: 'Leadership, teamwork, conflict' },
+                                    { id: 'mixed', name: 'Mixed', icon: '', desc: 'Both technical & behavioral' }
                                 ].map(type => (
                                     <label
                                         key={type.id}

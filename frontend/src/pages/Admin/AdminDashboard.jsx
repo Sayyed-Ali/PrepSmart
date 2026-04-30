@@ -30,12 +30,12 @@ function AdminDashboard() {
     }
 
     const tabs = [
-        { id: 'overview', label: 'Overview', icon: '📊' },
-        { id: 'companies', label: 'Manage Companies', icon: '🏢' },
-        { id: 'users', label: 'Manage Users', icon: '👥' },
-        { id: 'questions', label: 'Questions Bank', icon: '📝' },
-        { id: 'dsa', label: 'DSA Problems', icon: '💻' },
-        { id: 'vacancies', label: 'Job Vacancies', icon: '💼' }
+        { id: 'overview', label: 'Overview', icon: '' },
+        { id: 'companies', label: 'Manage Companies', icon: '' },
+        { id: 'users', label: 'Manage Users', icon: '' },
+        { id: 'questions', label: 'Questions Bank', icon: '' },
+        { id: 'dsa', label: 'DSA Problems', icon: '' },
+        { id: 'vacancies', label: 'Job Vacancies', icon: '' }
     ]
 
     return (
@@ -116,25 +116,25 @@ function OverviewTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-600">
-                    <div className="text-3xl mb-2">👥</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalUsers}</div>
                     <div className="text-gray-600">Total Users</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-green-600">
-                    <div className="text-3xl mb-2">🏢</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalCompanies}</div>
                     <div className="text-gray-600">Companies</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-600">
-                    <div className="text-3xl mb-2">🎤</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.totalInterviews}</div>
                     <div className="text-gray-600">Interviews</div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-orange-600">
-                    <div className="text-3xl mb-2">🔥</div>
+                    <div className="text-3xl mb-2"></div>
                     <div className="text-3xl font-bold text-gray-800">{stats.activeToday}</div>
                     <div className="text-gray-600">Active Today</div>
                 </div>
@@ -144,19 +144,19 @@ function OverviewTab() {
                 <h3 className="text-xl font-bold mb-4">Quick Actions</h3>
                 <div className="grid md:grid-cols-3 gap-4">
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">🏢</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">Add Company</div>
                         <div className="text-sm text-gray-600">Add new company data</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">📤</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">Bulk Upload</div>
                         <div className="text-sm text-gray-600">Import companies via JSON</div>
                     </button>
 
                     <button className="p-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition text-left">
-                        <div className="text-2xl mb-2">📊</div>
+                        <div className="text-2xl mb-2"></div>
                         <div className="font-semibold">View Reports</div>
                         <div className="text-sm text-gray-600">Platform analytics</div>
                     </button>
@@ -184,7 +184,7 @@ function CompaniesTab() {
 
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">🏢</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Add Single Company</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         Use the form to add company details one by one
@@ -198,7 +198,7 @@ function CompaniesTab() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">📤</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Bulk Upload</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         Use the upload script to add multiple companies
@@ -230,7 +230,7 @@ function QuestionsTab() {
 
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">📝</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Aptitude Questions</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         Add questions for quantitative, logical, and verbal tests
@@ -244,7 +244,7 @@ function QuestionsTab() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">📚</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Question Bank</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         View and manage all aptitude questions
@@ -276,7 +276,7 @@ function DSATab() {
 
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">💻</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Add DSA Problem</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         Add coding problems with multiple solution approaches
@@ -290,7 +290,7 @@ function DSATab() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">📊</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Problem Statistics</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         View stats on DSA problems and user progress
@@ -322,7 +322,7 @@ function VacanciesTab() {
 
             <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">💼</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Post New Vacancy</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         Add new job postings for students
@@ -336,7 +336,7 @@ function VacanciesTab() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                    <div className="text-3xl mb-3">📋</div>
+                    <div className="text-3xl mb-3"></div>
                     <h3 className="font-bold text-lg mb-2">Active Vacancies</h3>
                     <p className="text-sm text-gray-600 mb-4">
                         View and manage all job postings

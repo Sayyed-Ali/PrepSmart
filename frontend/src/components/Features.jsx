@@ -1,8 +1,8 @@
 import { Bot, Building2, Brain, Code, TrendingUp, Users } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'  // Add this
+import { useNavigate } from 'react-router-dom'
 
 const Features = () => {
-    const navigate = useNavigate()  // Add this
+    const navigate = useNavigate()
 
     const features = [
         {
@@ -94,7 +94,7 @@ const Features = () => {
                     })}
                 </div>
 
-                {/* Bottom CTA - now goes to dashboard */}
+                {/* Bottom CTA  */}
                 <div className="text-center mt-16">
                     <button
                         onClick={() => navigate('/dashboard')}

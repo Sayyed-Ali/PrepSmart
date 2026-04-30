@@ -1,4 +1,3 @@
-// COMPLETE FILE - Copy exactly as is
 const pdfParse = require('pdf-parse');
 const fs = require('fs');
 
@@ -15,7 +14,7 @@ const extractResumeText = async (filePath) => {
         return text;
     } catch (error) {
         console.error('Error parsing PDF:', error);
-        return ''; // ✅ Return empty string instead of throwing
+        return ''; // Return empty string instead of throwing
     }
 };
 

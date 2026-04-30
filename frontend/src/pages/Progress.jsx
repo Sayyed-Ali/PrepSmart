@@ -214,19 +214,19 @@ function Progress() {
                                 onClick={() => navigate('/aptitude-setup')}
                                 className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-orange-700 hover:to-red-700 transition shadow-lg"
                             >
-                                📝 Aptitude Test
+                                Aptitude Test
                             </button>
                             <button
                                 onClick={() => navigate('/dsa')}
                                 className="bg-gradient-to-r from-green-600 to-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-teal-700 transition shadow-lg"
                             >
-                                💻 Practice DSA
+                                Practice DSA
                             </button>
                             <button
                                 onClick={() => navigate('/interview-setup')}
                                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-blue-700 transition shadow-lg"
                             >
-                                🎤 New Interview
+                                New Interview
                             </button>
                         </div>
                     </div>
@@ -236,7 +236,7 @@ function Progress() {
                         {/* Interview Stats */}
                         <div className="bg-white rounded-xl shadow-lg p-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">🎤</span>
+                                <span className="text-2xl"></span>
                                 <div className="text-sm text-gray-600">Interviews</div>
                             </div>
                             <div className="text-3xl font-bold text-blue-600">{safeInterviews.length}</div>
@@ -247,7 +247,7 @@ function Progress() {
 
                         <div className="bg-white rounded-xl shadow-lg p-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">⭐</span>
+                                <span className="text-2xl"></span>
                                 <div className="text-sm text-gray-600">Interview Score</div>
                             </div>
                             <div className="text-3xl font-bold text-green-600">{averageScore}</div>
@@ -257,7 +257,7 @@ function Progress() {
                         {/* DSA Stats */}
                         <div className="bg-white rounded-xl shadow-lg p-6">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-2xl">💻</span>
+                                <span className="text-2xl"></span>
                                 <div className="text-sm text-gray-600">DSA Solved</div>
                             </div>
                             <div className="text-3xl font-bold text-purple-600">
@@ -290,31 +290,31 @@ function Progress() {
                                 onClick={() => setActiveTab('overview')}
                                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition whitespace-nowrap ${activeTab === 'overview' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                             >
-                                📊 Overview
+                                Overview
                             </button>
                             <button
                                 onClick={() => setActiveTab('interviews')}
                                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition whitespace-nowrap ${activeTab === 'interviews' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                             >
-                                🎤 Interviews
+                                Interviews
                             </button>
                             <button
                                 onClick={() => setActiveTab('aptitude')}
                                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition whitespace-nowrap ${activeTab === 'aptitude' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                             >
-                                📝 Aptitude
+                                Aptitude
                             </button>
                             <button
                                 onClick={() => setActiveTab('dsa')}
                                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition whitespace-nowrap ${activeTab === 'dsa' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                             >
-                                💻 DSA Practice
+                                DSA Practice
                             </button>
                             <button
                                 onClick={() => setActiveTab('companies')}
                                 className={`flex-1 py-3 px-6 rounded-lg font-semibold transition whitespace-nowrap ${activeTab === 'companies' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}
                             >
-                                🏢 Companies
+                                Companies
                             </button>
                         </div>
                     </div>
@@ -339,7 +339,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">🎤</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <h3 className="text-xl font-bold text-gray-800 mb-2">No Interview Data</h3>
                                         <p className="text-gray-600">Complete interviews to see your progress</p>
                                     </div>
@@ -361,7 +361,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">📝</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <h3 className="text-xl font-bold text-gray-800 mb-2">No Aptitude Data</h3>
                                         <p className="text-gray-600 mb-4">Take tests to see your progress</p>
                                         <button
@@ -394,7 +394,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">💻</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <h3 className="text-xl font-bold text-gray-800 mb-2">No DSA Progress</h3>
                                         <p className="text-gray-600 mb-4">Start solving problems!</p>
                                         <button
@@ -424,7 +424,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">📊</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <p className="text-gray-600">No aptitude data yet</p>
                                     </div>
                                 )}
@@ -450,7 +450,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">📊</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <p className="text-gray-600">No interview types data</p>
                                     </div>
                                 )}
@@ -471,7 +471,7 @@ function Progress() {
                                     </div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-                                        <div className="text-6xl mb-4">📈</div>
+                                        <div className="text-6xl mb-4"></div>
                                         <p className="text-gray-600">No category data yet</p>
                                     </div>
                                 )}
@@ -557,7 +557,7 @@ function Progress() {
 
                             {safeAptitudeTests.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="text-6xl mb-4">📝</div>
+                                    <div className="text-6xl mb-4"></div>
                                     <p className="text-gray-600 text-lg mb-4">No aptitude tests taken yet</p>
                                     <button
                                         onClick={() => navigate('/aptitude-setup')}
@@ -663,7 +663,7 @@ function Progress() {
 
                             {!dsaStats || dsaStats.totalSolved === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="text-6xl mb-4">💻</div>
+                                    <div className="text-6xl mb-4"></div>
                                     <p className="text-gray-600 text-lg mb-4">No DSA problems solved yet</p>
                                     <button
                                         onClick={() => navigate('/dsa')}
@@ -720,7 +720,7 @@ function Progress() {
 
                             {companyPerformance.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="text-6xl mb-4">🏢</div>
+                                    <div className="text-6xl mb-4"></div>
                                     <p className="text-gray-600 text-lg">Complete interviews to see company-wise analytics</p>
                                 </div>
                             ) : (

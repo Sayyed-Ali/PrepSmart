@@ -67,11 +67,10 @@ router.post('/create', upload.single('resume'), async (req, res) => {
             resumeText: resumeText || ''
         });
 
-        console.log('Generated questions type:', typeof generatedQuestions);
-        console.log('Generated questions array?', Array.isArray(generatedQuestions));
-        console.log('Generated questions count:', generatedQuestions?.length);
+        // console.log('Generated questions type:', typeof generatedQuestions);
+        // console.log('Generated questions array?', Array.isArray(generatedQuestions));
+        // console.log('Generated questions count:', generatedQuestions?.length);
 
-        // ✅ CRITICAL: Verify we have an actual array
         if (!Array.isArray(generatedQuestions) || generatedQuestions.length === 0) {
             console.error('Invalid questions format:', generatedQuestions);
             return res.status(500).json({
@@ -80,7 +79,7 @@ router.post('/create', upload.single('resume'), async (req, res) => {
             });
         }
 
-        // ✅ Map questions to proper subdocument structure
+        // Map questions to proper subdocument structure
         const questionsArray = generatedQuestions.map((q, index) => ({
             id: q.id || (index + 1),
             question: String(q.question || ''),
@@ -92,9 +91,9 @@ router.post('/create', upload.single('resume'), async (req, res) => {
             timeTaken: 0
         }));
 
-        console.log('Mapped questions array:', JSON.stringify(questionsArray, null, 2));
+        // console.log('Mapped questions array:', JSON.stringify(questionsArray, null, 2));
 
-        // ✅ Create interview with ARRAY of questions
+        // Create interview with ARRAY of questions
         const interviewData = {
             user: userId,
             company: String(company),
@@ -103,7 +102,7 @@ router.post('/create', upload.single('resume'), async (req, res) => {
             jobDescription: String(jobDescription || ''),
             resumeText: resumeText ? String(resumeText.substring(0, 2000)) : '',
             resumeFileName: String(resumeFileName),
-            questions: questionsArray,  // ✅ This MUST be an array
+            questions: questionsArray,
             status: 'in-progress',
             startedAt: new Date()
         };

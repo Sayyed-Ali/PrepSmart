@@ -220,7 +220,7 @@ function CompanyDetail() {
                             onClick={() => navigate('/interview-setup')}
                             className="bg-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-purple-700 transition shadow-lg hover:shadow-xl"
                         >
-                            Practice Interview for {company.name} 🚀
+                            Practice Interview for {company.name}
                         </button>
                     </div>
                 </div>

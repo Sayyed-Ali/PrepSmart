@@ -30,7 +30,6 @@ function Login() {
             const response = await authAPI.login(formData)
             console.log('Login successful:', response)
 
-            // ✅ ADD THIS - Check role and redirect accordingly
             const user = authAPI.getCurrentUser()
 
             if (user && user.role === 'admin') {

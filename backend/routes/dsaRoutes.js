@@ -17,7 +17,7 @@ router.get('/problems', async (req, res) => {
 
         const problems = await DSAProblem.find(filter).sort({ category: 1, difficulty: 1 });
 
-        // ✅ Get user ID from query or body (since no auth middleware)
+        //  Get user ID from query or body (since no auth middleware)
         const userId = req.query.userId || req.body.userId;
 
         // If user ID provided, get their progress
@@ -121,7 +121,7 @@ router.post('/problems/:id/toggle-complete', async (req, res) => {
             });
         }
 
-        // ✅ AUTO-LOG PRACTICE ACTIVITY (NEW CODE)
+        //  AUTO-LOG PRACTICE ACTIVITY (NEW CODE)
         if (progress.isCompleted) {
             const today = new Date();
             today.setHours(0, 0, 0, 0);

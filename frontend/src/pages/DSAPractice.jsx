@@ -223,7 +223,7 @@ function DSAPractice() {
                         <div className="divide-y divide-gray-200">
                             {problems.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="text-6xl mb-4">💻</div>
+                                    <div className="text-6xl mb-4"></div>
                                     <p className="text-gray-600 text-lg">No problems found</p>
                                 </div>
                             ) : (
@@ -314,7 +314,7 @@ function DSAPractice() {
                                                 onClick={() => navigate(`/dsa/${problem._id}`)}
                                                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-semibold"
                                             >
-                                                💡 Hints
+                                                Hints
                                             </button>
 
                                             {/* Favorite Button */}

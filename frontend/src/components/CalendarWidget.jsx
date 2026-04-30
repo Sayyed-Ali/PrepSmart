@@ -37,7 +37,7 @@ function CalendarWidget() {
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                    💼 Job Vacancies
+                    Job Vacancies
                 </h3>
                 <button
                     onClick={() => window.location.href = '/vacancies'}
@@ -50,7 +50,7 @@ function CalendarWidget() {
             {/* Vacancies List */}
             {vacancies.length === 0 ? (
                 <div className="text-center py-12">
-                    <div className="text-5xl mb-3">💼</div>
+                    <div className="text-5xl mb-3"></div>
                     <p className="text-gray-600 text-sm">No active job postings</p>
                     <p className="text-xs text-gray-500 mt-1">Check back soon!</p>
                 </div>
@@ -77,7 +77,7 @@ function CalendarWidget() {
                                 {/* Details */}
                                 <div className="flex flex-wrap gap-2 text-xs text-gray-600 mb-3">
                                     <span className="flex items-center gap-1">
-                                        📍 {vacancy.location}
+                                        {vacancy.location}
                                     </span>
                                     <span>•</span>
                                     <span>{vacancy.experience}</span>
@@ -101,7 +101,7 @@ function CalendarWidget() {
                                         daysLeft <= 7 ? 'text-orange-600' :
                                             'text-gray-600'
                                         }`}>
-                                        {daysLeft > 0 ? `⏰ ${daysLeft}d left` : '⏰ Expired'}
+                                        {daysLeft > 0 ? ` ${daysLeft}d left` : ' Expired'}
                                     </span>
                                 </div>
 

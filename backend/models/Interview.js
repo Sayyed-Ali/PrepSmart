@@ -76,7 +76,7 @@ const interviewSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    questions: [questionSchema],  // ✅ THIS IS THE FIX!
+    questions: [questionSchema],
     status: {
         type: String,
         enum: ['in-progress', 'completed', 'abandoned'],
